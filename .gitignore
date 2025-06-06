@@ -1,0 +1,5 @@
+.env
+/venv
+/frontEnd/node_modules
+__pycache__
+*.Identifier
