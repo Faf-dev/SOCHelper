@@ -1,0 +1,75 @@
+* {
+    font-family: 'Lato', Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background: url('../img/login_register.png') no-repeat center center fixed;
+  background-size: cover;
+}
+
+button a {
+  text-decoration: none;
+  color: white;
+}
+
+.case {
+  margin: 10px;
+  width: 485px;
+  height: 40px;
+  border-radius: 8px;
+  padding-left: 45px;
+}
+
+.case::placeholder {
+  color: #aaa;
+}
+
+.checkbox-container {
+    margin: 10px;
+}
+.icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon .bi {
+  position: absolute;
+  left: 30px;
+  color: #aaa;
+  pointer-events: none;
+}
+
+.login-container {
+  width: 400px;
+  padding: 40px;
+  margin-top: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0); /* Fond transparent */
+  border-radius: 10px;
+  color: white;
+  text-align: center;
+}
+
+.login-container button {
+  width: 300px;
+  padding: 10px;
+  margin: 15px;
+  background-color: #3b3a39;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+p {
+  margin: 10px;
+}

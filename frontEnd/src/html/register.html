@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Helper</title>
+    <link rel="stylesheet" href="../css/register.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="login-container">
+      <form id="register-form">
+        <div class="icon">
+          <i class="bi bi-envelope"></i>
+          <input id="email" type="text" class="case" placeholder="Email" required><br><br>
+        </div>
+        <div class="icon">
+          <i class="bi bi-shield-lock"></i>
+          <input id="password" type="password" class="case" placeholder="Mot de passe" required><br><br>
+        </div>
+        <div class="checkbox-container">
+            <input type="checkbox" id="accept" name="accept" required>
+            <label for="accept">J'accepte les conditions d'utilisation</label>
+        </div>
+        <button class="button" type="submit">Créer un compte</button>
+        </form>
+        <p>__________________ ou __________________ </p>
+        <p>Vous avez déjà un compte?</p>
+        <a href="login.html"><button class="button">Connexion</button></a>
+      </div>
+    <script src="../js/register.js"></script>
+  </body>
+</html>

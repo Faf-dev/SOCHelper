@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOC Helper</title>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h3><img src="../img/logo.png"/>SOC Helper</h3>
+            <hr>
+            <nav class="menu">
+                <a href="#" class="active"><i class="bi bi-search"></i>Logs en cours</a>
+                <p>Analysez en temps réel votre serveur web.</p>
+                <a href="alertes.html"><i class="bi bi-exclamation-octagon"></i>Alertes</a>
+                <p>Consultez vos alertes.</p>
+                <hr>
+                <a href="settings.html"><i class="bi bi-gear"></i>Paramètres</a>
+                <p>Configurez votre serveur.</p>
+            </nav>
+        </div>
+        <button class="logout-btn" id="logout-btn">Déconnexion</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="top-bar">
+        <div class="user-info">
+          Connecté en tant que: <strong></strong>
+        </div>
+        <div class="log-path">Log: <code>/var/log/access.log</code> | NGINX</div>
+        <div class="status">
+          <span class="dot"></span> État de l’analyse
+          <button class="stop-btn">Stop</button>
+        </div>
+      </header>
+
+      <!-- Alerte Active -->
+      <section class="alert-banner">
+        <span class="icon"><i class="bi bi-exclamation-square"></i></span>
+        <strong>ALERTE:</strong> Tentative SQLi détectée depuis <strong>192.168.1.13</strong> – Le 22/05/2025 à 16:17
+      </section>
+
+      <!-- Table des logs -->
+      <section class="log-table">
+        <table>
+          <thead>
+            <tr>
+              <th>DATE</th>
+              <th>HEURE</th>
+              <th>IP SOURCE</th>
+              <th>TYPE D’ATTAQUE</th>
+              <th>URL CIBLE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>22/05/2025</td>
+              <td>16:23</td>
+              <td>192.168.1.13</td>
+              <td>SQL Injection</td>
+              <td>/login<br><code>“1 OR 1=1 --”</code></td>
+            </tr>
+            <tr>
+              <td>22/05/2025</td>
+              <td>11:22</td>
+              <td>192.168.1.39</td>
+              <td>SQL Injection</td>
+              <td>/index.php<br><code>“1 OR 1=1 --”</code></td>
+            </tr>
+            <tr>
+              <td>22/05/2025</td>
+              <td>08:56</td>
+              <td>192.168.1.48</td>
+              <td>Brut Force</td>
+              <td>/login</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Pagination -->
+      <footer class="pagination">
+        <a href="#">← Previous</a>
+        <a class="active" href="#">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <span>...</span>
+        <a href="#">68</a>
+        <a href="#">Next →</a>
+      </footer>
+    </main>
+  </div>
+  <script src="../js/getEmail.js"></script>
+  <script src="../js/getEvents.js"></script>
+  <script src="../js/deleteHandler.js"></script>
+  <script src="../js/logout.js"></script>
+</body>
+</html>
