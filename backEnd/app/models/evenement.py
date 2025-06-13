@@ -15,13 +15,7 @@ class Evenement(db.Model):
 
     alertes = db.relationship("Alerte", backref="evenement", lazy=True)
 
-    def delete(self):
-        """Supprime l'événement de la base de données."""
-        db.session.delete(self)
-        db.session.commit()
-
     def to_dict(self):
-        """Convertit l'événement en dictionnaire."""
         return {
             'evenement_id': str(self.evenement_id),
             'created_at': self.created_at.isoformat() if self.created_at else None,

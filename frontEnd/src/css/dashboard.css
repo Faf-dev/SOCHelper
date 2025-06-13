@@ -137,9 +137,17 @@ hr {
   display: inline-block;
   width: 10px;
   height: 10px;
-  background-color: #00ff57;
+  background-color: #dc3545;
   border-radius: 50%;
   margin-right: 5px;
+  transition: background-color 0.3s ease;
+}
+.status .dot.active {
+  background-color: #00ff57; /* Vert - analyse active */
+}
+
+.status .dot.inactive {
+  background-color: #dc3545; /* Rouge - analyse arrêtée */
 }
 
 .stop-btn {
@@ -150,6 +158,7 @@ hr {
   color: white;
   border: none;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .icon {
@@ -198,17 +207,19 @@ hr {
   margin-top: auto;
 }
 
-.pagination a,
-.pagination span {
-  color: #ccc;
-  text-decoration: none;
-  padding: 5px 10px;
+#prevPage, #nextPage {
+  background: none;
+  border: none;
+  color: white;
 }
 
-.pagination a.active {
-  background-color: #3b3a39;
-  border-radius: 5px;
-  color: white;
+#prevPage:hover .active, #nextPage:hover .active {
+  color: #2a3a3d; /* Vert - hover effect */
+}
+.pagination a.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Responsive */

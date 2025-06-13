@@ -36,12 +36,38 @@
         </div>
         <div class="status">
           <span class="dot"></span> État de l’analyse
-          <button class="stop-btn">Stop</button>
+          <button class="stop-btn" id="realtime-toggle">Stop</button>
         </div>
       </header>
+      <!-- Insérer des diagrammes si faisable ici -->
+
+      <!-- Table des logs -->
+      <section class="log-table">
+        <table>
+          <thead>
+            <tr>
+              <th>DATE</th>
+              <th>HEURE</th>
+              <th>IP SOURCE</th>
+              <th>TYPE D’ATTAQUE</th>
+              <th>URL CIBLE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Les alertes seront insérées ici -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Pagination -->
+      <footer class="pagination" id="pagination"></footer>
     </main>
   </div>
   <script src="../js/getEmail.js"></script>
   <script src="../js/logout.js"></script>
+  <script src="../js/pagination.js"></script>
+  <script src="../js/realtimeButton.js"></script>
+  <script src="../js/getAlertes.js"></script>
+  <script src="../js/deleteHandler.js"></script>
 </body>
 </html>

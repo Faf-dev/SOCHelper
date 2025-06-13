@@ -37,7 +37,7 @@
         <div class="log-path">Log: <code>/var/log/access.log</code> | NGINX</div>
         <div class="status">
           <span class="dot"></span> État de l’analyse
-          <button class="stop-btn">Stop</button>
+          <button class="stop-btn" id="realtime-toggle">Start</button>
         </div>
       </header>
 
@@ -60,46 +60,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>22/05/2025</td>
-              <td>16:23</td>
-              <td>192.168.1.13</td>
-              <td>SQL Injection</td>
-              <td>/login<br><code>“1 OR 1=1 --”</code></td>
-            </tr>
-            <tr>
-              <td>22/05/2025</td>
-              <td>11:22</td>
-              <td>192.168.1.39</td>
-              <td>SQL Injection</td>
-              <td>/index.php<br><code>“1 OR 1=1 --”</code></td>
-            </tr>
-            <tr>
-              <td>22/05/2025</td>
-              <td>08:56</td>
-              <td>192.168.1.48</td>
-              <td>Brut Force</td>
-              <td>/login</td>
-            </tr>
           </tbody>
         </table>
       </section>
 
       <!-- Pagination -->
-      <footer class="pagination">
-        <a href="#">← Previous</a>
-        <a class="active" href="#">1</a>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <span>...</span>
-        <a href="#">68</a>
-        <a href="#">Next →</a>
+      <footer class="pagination" id="pagination">
       </footer>
     </main>
   </div>
   <script src="../js/getEmail.js"></script>
-  <script src="../js/getEvents.js"></script>
   <script src="../js/deleteHandler.js"></script>
   <script src="../js/logout.js"></script>
+  <script src="../js/pagination.js"></script>
+  <script src="../js/realtimeButton.js"></script>
+  <script src="../js/getEvents.js"></script>
 </body>
 </html>

@@ -20,7 +20,6 @@ class Utilisateur(db.Model):
 
     @validates('email')
     def validateEmail(self, key, value):
-        """Valide l'email selon les critères spécifiés."""
         if not isinstance(value, str):
             raise TypeError("L'email doit être une chaîne de caractères")
         if not re.match(r"[^@]+@[^@]+\.[^@]+", value):
@@ -31,7 +30,6 @@ class Utilisateur(db.Model):
 
     @validates('mot_de_passe')
     def validatePassword(self, key, value):
-        """Valide le mot de passe selon les critères spécifiés."""
         if not isinstance(value, str):
             raise TypeError("Le mot de passe doit être une chaîne de caractères")
         if len(value) < 8:
@@ -52,5 +50,4 @@ class Utilisateur(db.Model):
         return generate_password_hash(mot_de_passe)
 
     def verifyPassword(self, mot_de_passe):
-        """Vérifie si le mot de passe fourni correspond au mot de passe haché stocké."""
         return check_password_hash(self.mot_de_passe, mot_de_passe)

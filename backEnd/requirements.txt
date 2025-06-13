@@ -1,0 +1,11 @@
+flask
+flask_sqlalchemy
+flask_cors
+flask_bcrypt
+flask_jwt_extended
+flask_restx
+psycopg2-binary
+python-dotenv
+werkzeug==2.0.3
+sqlalchemy==1.4.49
+flask_limiter
