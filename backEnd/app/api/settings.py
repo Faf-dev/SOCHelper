@@ -15,12 +15,11 @@ class Upload(Resource):
         if not user:
             return {"msg": "Utilisateur non trouvé"}, 404
 
-        file = request.files.get("file")
         server = request.form.get("server")
         path = request.form.get("chemin")
 
-        if not file or not SettingsService.allowedFile(file.filename):
-            return {"msg": "Fichier invalide ou non fourni"}, 400
+        if not path:
+            return {"msg": "Chemin du fichier non fourni"}, 400
         if not server:
             return {"msg": "Type de serveur non fourni"}, 400
 
@@ -28,6 +27,6 @@ class Upload(Resource):
             # Crée une entrée en BDD
             SettingsService.createLogEntry(path, server, userId)
 
-            return {"msg": "Fichier reçu et analyse lancée", "server": server, "fileName": file.filename}, 200
+            return {"msg": "Fichier reçu et analyse lancée", "server": server, "filePath": path}, 200
         except Exception as e:
             return {"msg": f"Erreur lors du traitement : {str(e)}"}, 500

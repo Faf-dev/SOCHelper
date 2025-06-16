@@ -7,7 +7,7 @@ class SimplePagination {
   }
 
   async loadPage(page = 1) {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return;
 
     try {
@@ -40,7 +40,7 @@ class SimplePagination {
   }
 
   async checkNextPage(currentPage) {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       const resNext = await fetch(`${this.apiEndpoint}?page=${currentPage + 1}&per_page=${this.itemsPerPage}`, {
         headers: { "Authorization": "Bearer " + token }

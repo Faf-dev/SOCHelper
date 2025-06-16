@@ -1,70 +1,82 @@
 document.addEventListener("DOMContentLoaded", () => {
   const uploadArea = document.getElementById("uploadArea");
-  const fileInput = document.getElementById("fileInput");
   const analyzeBtn = document.getElementById("analyzeBtn");
   const serverSelect = document.getElementById("server-filter");
-  const token = localStorage.getItem("token");
+  const selectedFile = document.getElementById("selectedFile");
+  const fileName = document.getElementById("fileName");
+  const token = sessionStorage.getItem("token");
   if (!token) return;
 
-  let currentFile = null;
+  let isFileDialogOpen = false;
   let currentFilePath = null;
 
   // Affichage du fichier sélectionné
-  function displaySelectedFile(file) {
-    currentFile = file;
-    currentFilePath = file.path;
+  function displaySelectedFile(filePath) {
+    currentFilePath = filePath;
+    
+    // Cacher la zone d'upload et afficher la zone de fichier sélectionné
     uploadArea.style.display = "none";
+    if (selectedFile) selectedFile.style.display = "block";
     analyzeBtn.classList.add("show");
+    if (fileName) fileName.textContent = filePath;
   }
 
   // Suppression du fichier
   function clearSelectedFile() {
-    currentFile = null;
+    currentFilePath = null;
     uploadArea.style.display = "block";
+    if (selectedFile) selectedFile.style.display = "none";
     analyzeBtn.classList.remove("show");
-    fileInput.value = "";
   }
 
-  // Gestion du drag & drop
-  uploadArea.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    uploadArea.classList.add("dragover");
+  // Gestion du clic sur la zone d'upload
+  uploadArea.addEventListener("click", async () => {
+    if (isFileDialogOpen) return;
+    isFileDialogOpen = true;
+
+    try {
+      const filePaths = await window.electron.openFile();
+      if (filePaths && filePaths.length > 0) {
+        displaySelectedFile(filePaths[0]);
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ouverture du fichier :", error);
+      alert("Une erreur est survenue lors de l'ouverture du fichier. Veuillez réessayer.");
+    } finally {
+      isFileDialogOpen = false;
+    }
+  });
+  
+  // Prévenir le comportement par défaut pour tous les événements de drag
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
   });
 
-  uploadArea.addEventListener("dragleave", () => {
-    uploadArea.classList.remove("dragover");
-  });
-
-  uploadArea.addEventListener("drop", (e) => {
+  function preventDefaults(e) {
     e.preventDefault();
-    uploadArea.classList.remove("dragover");
+    e.stopPropagation();
+  }
 
-    const files = e.dataTransfer.files;
+  // Gérer le drop du fichier
+  uploadArea.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
     if (files.length > 0) {
-      const file = files[0];
-      displaySelectedFile(file);
+      const filePath = files[0].path;
+      displaySelectedFile(filePath);
     }
-  });
-
-  // Clic sur la zone d'upload
-  uploadArea.addEventListener("click", () => {
-    fileInput.click();
-  });
-
-  // Sélection de fichier via l'input
-  fileInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      displaySelectedFile(file);
-    }
-  });
+  }
 
   // Suppression du fichier
   document.getElementById("removeFile").addEventListener("click", clearSelectedFile);
 
-  // Lancement de l'analyse
+  // Lancement de l'analyse - A inclure
   analyzeBtn.addEventListener("click", async () => {
-    if (!currentFile) {
+    if (!currentFilePath) {
       alert("Aucun fichier sélectionné");
       return;
     }
@@ -75,15 +87,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Prépare les données à envoyer
     const formData = new FormData();
     formData.append("server", serverSelect.value);
-    formData.append("file", currentFile);
     formData.append("chemin", currentFilePath);
 
     try {
-      // Envoie les données à l'API Flask
-      const res = await fetch("http://localhost:5000/api/settings", {
+      const res = await fetch("http://localhost:5000/api/settings/", {
         method: "POST",
         headers: {
           "Authorization": "Bearer " + token,

@@ -1,22 +1,35 @@
+import os
 from ..models.fichier_log import FichierLog
 from ..models.user import Utilisateur
 from ..db import db
 
-allowedExtensions = {"log"}
 
 class SettingsService:
     @staticmethod
-    def allowedFile(fileName):
-        """Vérifie si le fichier est valide (nom et extension)."""
-        return fileName == "access.log"
+    def verifyFileExtension(filePath, allowedExtensions={"log"}):
+        """Vérifie si le fichier a une extension autorisée."""
+        extension = os.path.splitext(filePath)[1][1:]  # Récupère l'extension sans le point
+        if extension not in allowedExtensions:
+            raise ValueError(f"L'extension '{extension}' n'est pas autorisée. Seuls les fichiers {allowedExtensions} sont acceptés.")
+        return True
+
+    @staticmethod
+    def verifyFileExists(filePath):
+        """Vérifie si le fichier existe sur le système."""
+        if not os.path.exists(filePath):
+            raise FileNotFoundError(f"Le fichier {filePath} n'existe pas.")
+        return True
 
     @staticmethod
     def createLogEntry(filePath, server, userId):
         """Crée une entrée en BDD pour le fichier log."""
+        # Vérifier si l'utilisateur existe
         user = Utilisateur.query.get(userId)
         if not user:
             raise Exception("Utilisateur non trouvé")
-        try :
+
+        # Créer une entrée en BDD
+        try:
             fichier_log = FichierLog(
                 chemin=filePath,
                 type_log=server,
@@ -28,3 +41,15 @@ class SettingsService:
         except Exception as e:
             db.session.rollback()
             raise ValueError(f"Erreur lors de la création de l'entrée de log : {str(e)}")
+
+    @staticmethod
+    def processLogFile(filePath, server, userId):
+        """Processus complet pour vérifier et enregistrer un fichier log."""
+        # Vérifier l'existence du fichier
+        SettingsService.verifyFileExists(filePath)
+
+        # Vérifier l'extension du fichier
+        SettingsService.verifyFileExtension(filePath)
+
+        # Créer une entrée en BDD
+        return SettingsService.createLogEntry(filePath, server, userId)

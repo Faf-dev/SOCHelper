@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (res.ok) {
         errorDiv.innerText = "Connexion réussie ! Redirection...";
         errorDiv.style.color = "white";
-        localStorage.setItem("token", data.access_token); // stockage du token JWT en local
+        sessionStorage.setItem("token", data.access_token); // stockage du token JWT en local
         setTimeout(() => {
           window.location.href = "dashboard.html";
         }, 1000); // redirection après 1s vers le dashboard

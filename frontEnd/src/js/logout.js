@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
         const logoutButton = document.getElementById("logout-btn");
 
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 if (res.ok) {
-                    localStorage.clear();
+                    sessionStorage.clear();
                     window.location.href = "login.html";
                 }
             }

@@ -47,9 +47,35 @@ Reste a faire :
   - fonction d'alertes
   - Ajouter "evenement.url_cible" dans le MPD
 
+### Fait la semaine du 16/06 :
+
+FrontEnd :
+
+  
+
+  Script js :
+
+  Général :
+    - Récupère désormais le token dans sessionStorage (anciennement localStorage). Pourquoi sessionStorage ? : Les données stockées dans sessionStorage sont automatiquement supprimées lorsque l'onglet ou la fenêtre du navigateur est fermée, ce qui réduit les risques d'accès non autorisé
+
+    settings : 
+        - Modification du systeme de drag & drop : Utilisation de { dialog } (API d'Electron), permettant ainsi de récupérer le chemin absolu du fichier log fournis.
+    
+    main :
+        - Ajout de ipcMain pour la gestion du drag & drop via { dialog }
+    
+    preload :
+        - Sers d'intermediaire entre Electron et le backend pour le drag & drop (sinon Drag & Drop inutilisable)
+        
 
 
-fait la semaine du 09/06 :
+BackEnd :
+
+  settingsService :
+      - Vérifie si le fichier existe sur le système, vérifie l'extension `.log` et créer le modèle fichier_log en BDD (+ séparation des responsabilité des fonctions)
+
+
+### fait la semaine du 09/06 :
 
 FrontEnd :
 

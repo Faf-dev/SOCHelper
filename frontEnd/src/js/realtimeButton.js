@@ -36,7 +36,7 @@ class RealtimeButton {
   }
 
   async fetchNewData() {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) return;
 
     try {
@@ -60,7 +60,7 @@ class RealtimeButton {
       });
 
       if (res.status === 401) {
-        localStorage.clear();
+        sessionStorage.clear();
         alert("Session expirée. Veuillez vous reconnecter.");
         window.location.href = "login.html";
         return;
