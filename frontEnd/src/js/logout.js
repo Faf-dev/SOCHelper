@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     const token = sessionStorage.getItem("token");
-    if (token) {
+    if (!token) {
+    window.location.href = "login.html";
+    return;
+    } else {
         const logoutButton = document.getElementById("logout-btn");
 
         if (logoutButton) {
@@ -17,6 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         });
+      }
     }
-}
 });

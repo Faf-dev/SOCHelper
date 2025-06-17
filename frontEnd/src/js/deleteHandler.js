@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const token = sessionStorage.getItem("token");
-  if (!token) return;
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
 
   try {
     const tbody = document.querySelector(".log-table tbody");

@@ -2,6 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from flask import request
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import create_access_token
 from .. import limiter
 from app.services.authService import AuthService
 from ..models.user import Utilisateur
@@ -93,3 +94,17 @@ class Logout(Resource):
         if user:
             return {"msg": "Déconnexion réussie"}, 200
         return {"msg": "Utilisateur non trouvé"}, 404
+
+@auth_ns.route('/refreshToken')
+class RefreshToken(Resource):
+    @jwt_required()
+    @auth_ns.response(200, "Token renouvelé avec succès")
+    @auth_ns.response(404, "Utilisateur non trouvé") 
+    @auth_ns.response(401, "Token invalide ou expiré")
+    def post(self):
+        """Renouvellement du token JWT"""
+        success, result = AuthService.refreshToken()
+        if success:
+            return {"token": result}, 200
+        else:
+            return {"msg": result}, 404

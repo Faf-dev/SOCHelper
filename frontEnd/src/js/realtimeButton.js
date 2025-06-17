@@ -37,7 +37,10 @@ class RealtimeButton {
 
   async fetchNewData() {
     const token = sessionStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+    window.location.href = "login.html";
+    return;
+    }
 
     try {
       const currentPage = window.location.pathname;

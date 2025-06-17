@@ -1,6 +1,7 @@
 Problemes connu : 
 - deconnexion meme si actif
 - changer de page désactive l'analyse
+- Formulaire html Email/MDP bloqué ~1min après deconnexion
 
 Ce qui est implémenté :
   - Limite de 5 tentative de connexion par minute et par IP
@@ -57,6 +58,7 @@ FrontEnd :
 
   Général :
     - Récupère désormais le token dans sessionStorage (anciennement localStorage). Pourquoi sessionStorage ? : Les données stockées dans sessionStorage sont automatiquement supprimées lorsque l'onglet ou la fenêtre du navigateur est fermée, ce qui réduit les risques d'accès non autorisé
+    - Fix de la vérification du token : Redirige l'utilisateur vers login.html si le token n'est pas trouvé
 
     settings : 
         - Modification du systeme de drag & drop : Utilisation de { dialog } (API d'Electron), permettant ainsi de récupérer le chemin absolu du fichier log fournis.
@@ -67,6 +69,8 @@ FrontEnd :
     preload :
         - Sers d'intermediaire entre Electron et le backend pour le drag & drop (sinon Drag & Drop inutilisable)
         
+    tokenManager :
+        - Gère le renouvellement automatique du token si l'utilisateur est actif. Sinon, ne le renouvelle pas, supprime le token et redirige l'utilisateur vers login.html au bout de 30 minutes d'inactivité.
 
 
 BackEnd :

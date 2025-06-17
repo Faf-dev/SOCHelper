@@ -8,7 +8,10 @@ class SimplePagination {
 
   async loadPage(page = 1) {
     const token = sessionStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+    window.location.href = "login.html";
+    return;
+    }
 
     try {
       const res = await fetch(`${this.apiEndpoint}?page=${page}&per_page=${this.itemsPerPage}`, {
@@ -41,6 +44,10 @@ class SimplePagination {
 
   async checkNextPage(currentPage) {
     const token = sessionStorage.getItem("token");
+    if (!token) {
+    window.location.href = "login.html";
+    return;
+    }
     try {
       const resNext = await fetch(`${this.apiEndpoint}?page=${currentPage + 1}&per_page=${this.itemsPerPage}`, {
         headers: { "Authorization": "Bearer " + token }

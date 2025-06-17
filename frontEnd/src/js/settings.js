@@ -5,7 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedFile = document.getElementById("selectedFile");
   const fileName = document.getElementById("fileName");
   const token = sessionStorage.getItem("token");
-  if (!token) return;
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
 
   let isFileDialogOpen = false;
   let currentFilePath = null;
