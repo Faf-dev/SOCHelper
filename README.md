@@ -4,6 +4,7 @@ Problemes connu :
 - Formulaire html Email/MDP bloqué ~1min après deconnexion
 
 Ce qui est implémenté :
+  - Ajout automatique du fichier sélectionné + le type de serveur dans l'en tête de l'application
   - Limite de 5 tentative de connexion par minute et par IP
   - Securité du mot de passe (8 caractères minimum, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial)
   - Securité de l'email (vérification de la syntaxe, pas d'espace, pas de caractère spécial)
@@ -61,13 +62,17 @@ Général :
 
 
 FrontEnd :
+
   Script js :
+
+    getLogPath.js : 
+      - Récupère le chemin du fichier log et le type de serveur pour l'afficher dynamiquement à coté de l'utilisateur connecté dans l'en-tête.
+
     settings.js :
       - Stock l'ID du fichier dans le localStorage pour le récupérer dans dashboard.html (pas encore fait)
       - Ajout de l'affichage des fichier log lié à l'utilisateur connecté
       - Ajout d'un système de suppression des fichiers logs (les infos contenue en BDD)
       - Ajout d'un systeme de sélection de fichier à analyser
-
 
     realtimeButton.js :
       - Ajout de la fonction triggerLogAnalysis qui lance l'analyse du fichier log en même temps que l'analyse de la BDD.
@@ -77,6 +82,7 @@ BackEnd :
     - Logique métier pour la lecture du fichier log et la création d'événement et la création d'alertes a partir des résultats obtenues.
 
   services/settingsServices.py :
+    - Ajout d'une méthode pour récuperer qu'un fichier log spécifique via son id
     - Ajout de méthodes pour retrouver les fichier log lié a un utilisateur et une méthode pour la suppréssion.
 
   api/event.py :

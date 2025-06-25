@@ -60,6 +60,22 @@ class SettingsService:
         return SettingsService.createLogEntry(filePath, server, userId)
     
     @staticmethod
+    def getLog(userId, log_id):
+        """Récupère un fichier log de l'utilisateur"""
+        user = Utilisateur.query.get(userId)
+        if not user:
+            return None
+        
+        log = FichierLog.query.filter_by(fichier_log_id=log_id, user_id=userId).first()
+        return {
+            "id": str(log.fichier_log_id),
+            "chemin": log.chemin,
+            "type_log": log.type_log,
+            "add_at": log.add_at.isoformat() if log.add_at else None,
+            "analyse_en_temps_reel": log.analyse_en_temps_reel
+        } if log else None
+    
+    @staticmethod
     def getAllLogs(userId):
         """Récupère tous les fichiers logs de l'utilisateur"""
         user = Utilisateur.query.get(userId)
@@ -88,5 +104,4 @@ class SettingsService:
             return True
         except Exception as e:
             db.session.rollback()
-            print(f"Erreur lors de la suppression : {str(e)}")
             return False

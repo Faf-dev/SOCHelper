@@ -64,7 +64,7 @@ class LogList(Resource):
             return {"msg": f"Erreur : {str(e)}"}, 500
 
 @settings_ns.route('/logs/<string:log_id>')
-class LogDelete(Resource):
+class LogDetail(Resource):
     @jwt_required()
     def delete(self, log_id):
         """Supprime un fichier log par son ID"""
@@ -78,3 +78,16 @@ class LogDelete(Resource):
             return {"msg": "Fichier log supprimé"}, 200
         except Exception as e:
             return {"msg": f"Erreur lors de la suppression du fichier log : {str(e)}"}, 500
+
+    @jwt_required()
+    def get(self, log_id):
+        """Récupère les détails d'un fichier log spécifique"""
+        try:
+            user_id = get_jwt_identity()
+            log = SettingsService.getLog(user_id, log_id)
+            if not log:
+                return {"msg": "Fichier log non trouvé"}, 404
+            
+            return log, 200
+        except Exception as e:
+            return {"msg": f"Erreur : {str(e)}"}, 500

@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       if (res.ok) {
         const files = await res.json();
-        console.log("Réponse API :", files); // Debug
         displayExistingFiles(files);
       } else {
       console.error("Erreur API :", res.status, await res.text());
