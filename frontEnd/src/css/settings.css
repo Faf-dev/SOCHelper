@@ -1,4 +1,53 @@
 /* Styles pour la section des paramètres */
+.existing-files {
+  margin-bottom: 2rem;
+}
+
+.existing-files h4 {
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.file-item {
+  background-color: #591a1a;
+  border: 1px solid #8b2635;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.file-item .file-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file-item .file-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.file-item .file-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-type {
+  background: #007bff;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.file-date {
+  color: rgba(255, 255, 255, 0.801);
+  font-size: 0.9rem;
+}
+
+/* Styles pour la section des filtres */
 #filter {
   background-color: #132225;
   padding: 25px;

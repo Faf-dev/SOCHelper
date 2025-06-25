@@ -1,6 +1,6 @@
 from app.models.alerte import Alerte
 from app.models.user import Utilisateur
-from app.db import db
+from app import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
 

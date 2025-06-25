@@ -6,7 +6,7 @@ from flask_jwt_extended import create_access_token
 from .. import limiter
 from app.services.authService import AuthService
 from ..models.user import Utilisateur
-from .. import db
+from app import db
 
 # Création du namespace
 auth_ns = Namespace("auth", description="Opérations d'authentification")

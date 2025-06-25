@@ -1,7 +1,7 @@
 import os
 from ..models.fichier_log import FichierLog
 from ..models.user import Utilisateur
-from ..db import db
+from app import db
 
 
 class SettingsService:
@@ -28,6 +28,11 @@ class SettingsService:
         if not user:
             raise Exception("Utilisateur non trouvé")
 
+        # Vérifier si le fichier existe déjà
+        existing_log = FichierLog.query.filter_by(chemin=filePath, user_id=userId).first()
+        if existing_log:
+            raise ValueError("Ce fichier log existe déjà")
+
         # Créer une entrée en BDD
         try:
             fichier_log = FichierLog(
@@ -53,3 +58,35 @@ class SettingsService:
 
         # Créer une entrée en BDD
         return SettingsService.createLogEntry(filePath, server, userId)
+    
+    @staticmethod
+    def getAllLogs(userId):
+        """Récupère tous les fichiers logs de l'utilisateur"""
+        user = Utilisateur.query.get(userId)
+        if not user:
+            return None
+        
+        logs = FichierLog.query.filter_by(user_id=userId).order_by(FichierLog.add_at.desc()).all()
+        return [{
+            "id": str(log.fichier_log_id),
+            "chemin": log.chemin,
+            "type_log": log.type_log,
+            "add_at": log.add_at.isoformat() if log.add_at else None,
+            "analyse_en_temps_reel": log.analyse_en_temps_reel
+        } for log in logs] if logs else []
+    
+    @staticmethod
+    def deleteLog(log_id, user_id):
+        """Supprime un fichier log"""
+        try:
+            log = FichierLog.query.filter_by(fichier_log_id=log_id, user_id=user_id).first()
+            if not log:
+                return False
+        
+            db.session.delete(log)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"Erreur lors de la suppression : {str(e)}")
+            return False

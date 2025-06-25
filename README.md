@@ -28,25 +28,63 @@ Ce qui est implémenté :
   - Email de l'utilisateur affiché dans l'en-tête
   - import du fichier log (drag & drop ou chemin manuel)
   - Choix du serveur (Nginx/Apache)
-
-Reste a faire :
-  - Changer la methode de stockage du limiter (actuel = ram, a faire : Redis, memcached, etc..)
   - Implémentation des éléments dynamique en HTML/CSS :
       - Pagination
-      - Evenements détectés
+      - Evenements
+      - Alertes :
+          - Toutes les alertes dans /alerts
+      - Bouton vert ou rouge (analysé : oui/non)
+      - Bouton start/stop du dashboard
+      - Page "Paramètre" (gestion du fichiers log) et tout ce qui va avec : API, HTML/CSS ...
+      - Ajouter des méthodes pour sécuriser la création/connexion de l'utilisateur
+
+Reste a faire :
+
+#### /!\ IMPORTANT /!\
+Filtrer la récupération d'evenement et d'alerte en fonction des clés (actuellement : Récupère tout les evenements/alertes de la BDD)
+#### /!\ IMPORTANT /!\
+
+  - Changer la methode de stockage du limiter (actuel = ram, a faire : Redis, memcached, etc..)
+  - Implémentation des éléments dynamique en HTML/CSS :
       - Alertes :
           - Dernière alerte détecté dans /dashboard
-          - Toutes les alertes dans /alerts
-      - Type du fichier logs analysé
-      - Bouton vert ou rouge (analysé : oui/non)
-  - Bouton start/stop du dashboard
-  - Page "Paramètre" (gestion du fichiers log) et tout ce qui va avec : API, HTML/CSS ...
-  - Page "Alertes" et tout ce qui va avec : API, HTML/CSS ...
-  - Ajouter des méthodes pour sécuriser la création/connexion de l'utilisateur
   - fonction d'analyses
   - fonction d'évenement détecté
   - fonction d'alertes
   - Ajouter "evenement.url_cible" dans le MPD
+
+### Fait la semaine du 23/06 :
+
+Général :
+    - Suppression du fichier db.py (problème d'import et fichier inutile.)
+    - Fix des imports dans les tout les fichiers necessitant un accès a la db. (anciennement: `from .. import db`, maintenant: `from app import db`)
+
+
+FrontEnd :
+  Script js :
+    settings.js :
+      - Stock l'ID du fichier dans le localStorage pour le récupérer dans dashboard.html (pas encore fait)
+      - Ajout de l'affichage des fichier log lié à l'utilisateur connecté
+      - Ajout d'un système de suppression des fichiers logs (les infos contenue en BDD)
+      - Ajout d'un systeme de sélection de fichier à analyser
+
+
+    realtimeButton.js :
+      - Ajout de la fonction triggerLogAnalysis qui lance l'analyse du fichier log en même temps que l'analyse de la BDD.
+
+BackEnd :
+  services/analyseServices.py :
+    - Logique métier pour la lecture du fichier log et la création d'événement et la création d'alertes a partir des résultats obtenues.
+
+  services/settingsServices.py :
+    - Ajout de méthodes pour retrouver les fichier log lié a un utilisateur et une méthode pour la suppréssion.
+
+  api/event.py :
+    - Ajout de la route event/analyze pour lancer l'analyse et la création d'evenements.
+
+  api/settings.py :
+    - Ajout d'appel vers settingsService pour pouvoir supprimer un fichier log, et les retrouver pour eviter de devoir drag & drop a chaque fois
+
 
 ### Fait la semaine du 16/06 :
 
