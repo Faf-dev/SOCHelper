@@ -29,6 +29,7 @@ function updateAlertsTable(alerts) {
       <td>${heure}</td>
       <td>${alert.ip_source}</td>
       <td>${alert.type_evenement}</td>
+      <td>${alert.status_code !== null ? alert.status_code : 'N/A'}</td>
       <td>${alert.url_cible}</td>
       <td><button class="btn_delete" data-type="alert" data-id="${alert.alerte_id}"><i class="bi bi-trash3"></i></button></td>
     `;

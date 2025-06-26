@@ -31,6 +31,7 @@ CREATE TABLE "alertes" (
     "alerte_id" UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
     "ip_source" INET NOT NULL,
     "type_evenement" VARCHAR(255) NOT NULL,
+    "status_code" INTEGER,
     "evenement_id" UUID NOT NULL,
     "created_at" TIMESTAMP NOT NULL,
     PRIMARY KEY("alerte_id")
@@ -109,12 +110,13 @@ VALUES
     );
 
 -- Insertion de plusieurs alertes
-INSERT INTO "alertes" (alerte_id, ip_source, type_evenement, evenement_id, created_at)
+INSERT INTO "alertes" (alerte_id, ip_source, type_evenement, status_code, evenement_id, created_at)
 VALUES 
     (gen_random_uuid(),
     '192.168.1.100',
     (SELECT type_evenement FROM "evenements"
     WHERE ip_source = '192.168.1.100' AND url_cible = 'https://example.com/login' LIMIT 1),
+    401,
     (SELECT evenement_id FROM "evenements"
     WHERE ip_source = '192.168.1.100' AND url_cible = 'https://example.com/login' LIMIT 1),
     NOW()
@@ -123,6 +125,7 @@ VALUES
     '192.168.1.101',
     (SELECT type_evenement FROM "evenements" 
     WHERE ip_source = '192.168.1.101' LIMIT 1),
+    403,
     (SELECT evenement_id FROM "evenements"
     WHERE ip_source = '192.168.1.101' LIMIT 1),
     NOW()),
@@ -130,6 +133,7 @@ VALUES
     '10.0.0.5',
     (SELECT type_evenement FROM "evenements"
     WHERE ip_source = '10.0.0.5' LIMIT 1),
+    200,
     (SELECT evenement_id FROM "evenements"
     WHERE ip_source = '10.0.0.5' LIMIT 1),
     NOW()
@@ -138,6 +142,7 @@ VALUES
     '172.16.0.10',
     (SELECT type_evenement FROM "evenements"
     WHERE ip_source = '172.16.0.10' LIMIT 1),
+    500,
     (SELECT evenement_id FROM "evenements"
     WHERE ip_source = '172.16.0.10' LIMIT 1),
     NOW()
@@ -146,6 +151,7 @@ VALUES
     '192.168.1.100',
     (SELECT type_evenement FROM "evenements"
     WHERE ip_source = '192.168.1.100' AND url_cible = 'https://example.com/sensitive' LIMIT 1),
+    404,
     (SELECT evenement_id FROM "evenements"
     WHERE ip_source = '192.168.1.100' AND url_cible = 'https://example.com/sensitive' LIMIT 1),
     NOW());

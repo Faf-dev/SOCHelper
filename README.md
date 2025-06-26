@@ -60,6 +60,8 @@ Filtrer la récupération d'evenement et d'alerte en fonction des clés (actuell
 ### Fait la semaine du 23/06 :
 
 Général :
+    - Modification du modele Alert :
+      - Ajout d'une colonne "status_code" pour savoir si l'attaquant a échoué ou non.
     - Suppression du fichier db.py (problème d'import et fichier inutile.)
     - Fix des imports dans les tout les fichiers necessitant un accès a la db. (anciennement: `from .. import db`, maintenant: `from app import db`)
 

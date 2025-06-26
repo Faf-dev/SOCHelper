@@ -11,7 +11,7 @@ class SimplePagination {
     if (!token) {
     window.location.href = "login.html";
     return;
-    }
+  }
 
     try {
       const res = await fetch(`${this.apiEndpoint}?page=${page}&per_page=${this.itemsPerPage}`, {
@@ -115,6 +115,7 @@ class SimplePagination {
         <td>${heure}</td>
         <td>${alert.ip_source}</td>
         <td>${alert.type_evenement}</td>
+        <td>${alert.status_code !== null ? alert.status_code : 'N/A'}</td>
         <td>${alert.url_cible}</td>
         <td><button class="btn_delete" data-type="alert" data-id="${alert.alerte_id}"><i class="bi bi-trash3"></i></button></td>
       `;
@@ -150,7 +151,7 @@ class SimplePagination {
   }
 
   handle401() {
-    localStorage.clear();
+    sessionStorage.clear();
     alert("Session expirée. Veuillez vous reconnecter.");
     window.location.href = "login.html";
   }

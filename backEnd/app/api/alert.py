@@ -12,6 +12,7 @@ alerte_model = alert_ns.model('Alerte', {
     "alerte_id": fields.String(required=True, description="ID de l'alerte"),
     "ip_source": fields.String(required=True, description="Adresse IP source de l'alerte"),
     "type_evenement": fields.String(required=True, description="Type d'événement de l'alerte"),
+    "status_code": fields.Integer(required=False, description="Code de statut HTTP associé à l'alerte"),
     "evenement_id": fields.String(required=True, description="ID de l'événement associé à l'alerte"),
     "created_at": fields.String(required=True, description="Date de création de l'alerte"),
 })

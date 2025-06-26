@@ -8,7 +8,7 @@ from sqlalchemy.orm import joinedload
 class AlertService:
     @staticmethod
     def getAllAlertes(user_id):
-        """Récupère toutes les alertes pour un utilisateur donné"""
+        """Récupère tous les événements pour un utilisateur donné"""
         user = Utilisateur.query.get(user_id)
         if not user:
             return None
@@ -37,7 +37,7 @@ class AlertService:
             type_evenement=type_evenement,
             evenement_id=evenement_id,
             ip_source=ip_source,
-            created_at=datetime.utcnow()
+            created_at=datetime.now()
         )
         db.session.add(alerte)
         db.session.commit()
@@ -54,12 +54,13 @@ class AlertService:
         return True
 
     @staticmethod
-    def createAlerte(ip_source, type_evenement, fichier_log_id, url_cible=None):
+    def createAlerte(ip_source, type_evenement, fichier_log_id, status_code, url_cible=None):
         """Crée une nouvelle alerte"""
         alert = Alerte(
             ip_source=ip_source,
             type_evenement=type_evenement,
             fichier_log_id=fichier_log_id,
+            status_code=status_code,
             url_cible=url_cible,
             created_at=datetime.utcnow()
         )
