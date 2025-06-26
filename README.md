@@ -2,6 +2,7 @@ Problemes connu :
 - deconnexion meme si actif
 - changer de page désactive l'analyse
 - Formulaire html Email/MDP bloqué ~1min après deconnexion
+- Un token est toujours stocké dans localStorage (normalement SessionStorage)
 
 Ce qui est implémenté :
   - Ajout automatique du fichier sélectionné + le type de serveur dans l'en tête de l'application
