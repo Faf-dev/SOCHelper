@@ -8,7 +8,7 @@ from sqlalchemy.orm import joinedload
 class AlertService:
     @staticmethod
     def getAllAlertes(user_id):
-        """Récupère tous les événements pour un utilisateur donné"""
+        """Récupère toutes les alertes pour un utilisateur donné"""
         user = Utilisateur.query.get(user_id)
         if not user:
             return None
