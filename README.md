@@ -46,6 +46,8 @@ Reste a faire :
 Filtrer la récupération d'evenement et d'alerte en fonction des clés (actuellement : Récupère tout les evenements/alertes de la BDD)
 #### /!\ IMPORTANT /!\
 
+  - Mettre les api.response dans settings.py (api)
+  - Fix la page settings.html (drag & drop et selection de fichier log)
   - Changer la methode de stockage du limiter (actuel = ram, a faire : Redis, memcached, etc..)
   - Implémentation des éléments dynamique en HTML/CSS :
       - Alertes :
