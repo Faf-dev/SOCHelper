@@ -4,10 +4,11 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from datetime import timedelta
 from dotenv import load_dotenv
 import os
 
-limiter = Limiter(get_remote_address, default_limits=["6000 per hour", "100 per minute"])
+limiter = Limiter(get_remote_address, default_limits=["10000 per hour", "1000 per minute"])
 db = SQLAlchemy()
 jwt = JWTManager()
 
@@ -24,7 +25,8 @@ def create_app():
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv("SECRET_KEY")
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = int(os.getenv("JWT_EXPIRATION"))
+    jwt_expiration_minutes = int(os.getenv("JWT_EXPIRATION", 120))  # 120 minutes par défaut
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=jwt_expiration_minutes)
 
     db.init_app(app)
     jwt.init_app(app)

@@ -1,5 +1,6 @@
 from app.models.alerte import Alerte
 from app.models.user import Utilisateur
+from app.models.evenement import Evenement
 from app import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
@@ -54,15 +55,14 @@ class AlertService:
         return True
 
     @staticmethod
-    def createAlerte(ip_source, type_evenement, fichier_log_id, status_code, url_cible=None):
+    def createAlerte(ip_source, type_evenement, fichier_log_id, status_code, url_cible=None, evenement_id=None):
         """Crée une nouvelle alerte"""
         alert = Alerte(
             ip_source=ip_source,
             type_evenement=type_evenement,
-            fichier_log_id=fichier_log_id,
             status_code=status_code,
-            url_cible=url_cible,
-            created_at=datetime.utcnow()
+            evenement_id=evenement_id,
+            created_at=datetime.now()
         )
         db.session.add(alert)
         db.session.commit()

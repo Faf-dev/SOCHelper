@@ -2,7 +2,6 @@ from flask_restx import Namespace, Resource, fields
 from flask import request
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import create_access_token
 from .. import limiter
 from app.services.authService import AuthService
 from ..models.user import Utilisateur
@@ -22,6 +21,7 @@ auth_model = auth_ns.model('Auth', {
 
 @auth_ns.route('/register', methods=['POST'])
 class Register(Resource):
+    @limiter.limit("10 per minute")
     @auth_ns.expect(auth_model)
     @auth_ns.response(201, "Inscription réussie")
     @auth_ns.response(409, "Utilisateur déjà enregistré")
@@ -71,7 +71,6 @@ class Login(Resource):
 
 @auth_ns.route('/user', methods=['GET'])
 class User(Resource):
-    @limiter.limit("10 per minute")
     @jwt_required()
     @auth_ns.response(200, "Utilisateur récupéré avec succès")
     @auth_ns.response(404, "Utilisateur non trouvé")

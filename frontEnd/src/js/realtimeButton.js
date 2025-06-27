@@ -3,13 +3,15 @@ class RealtimeButton {
     this.pollingInterval = null;
     this.isRealTimeActive = false;
     this.lastUpdateTime = null;
+    this.lastEventId = null;
   }
 
   start() {
     if (this.isRealTimeActive) return;
     
+    this.triggerLogAnalysis();
     this.fetchNewData();
-    this.pollingInterval = setInterval(() => this.fetchNewData(), 1000); // Scan toutes les secondes
+    this.pollingInterval = setInterval(() => this.fetchNewData(), 500);
     this.isRealTimeActive = true;
     this.updateButtonState();
     
@@ -32,6 +34,33 @@ class RealtimeButton {
       this.stop();
     } else {
       this.start();
+    }
+  }
+
+    async triggerLogAnalysis() {
+    const token = sessionStorage.getItem("token");
+    if (!token) return;
+
+    // Récupérez ici votre fichier_log_id,  
+    // par exemple depuis un data-attribute du bouton :
+    const btn = document.getElementById('realtime-toggle');
+    const fichier_log_id = btn.dataset.logId;  
+    if (!fichier_log_id) return;
+
+    try {
+      const res = await fetch('http://localhost:5000/api/event/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ fichier_log_id })
+      });
+      if (!res.ok) {
+        console.error('Analyse failed:', await res.text());
+      }
+    } catch (err) {
+      console.error('Erreur triggerLogAnalysis:', err);
     }
   }
 
@@ -63,7 +92,7 @@ class RealtimeButton {
       });
 
       if (res.status === 401) {
-        sessionStorage.clear();
+        localStorage.clear();
         alert("Session expirée. Veuillez vous reconnecter.");
         window.location.href = "login.html";
         return;
@@ -179,8 +208,11 @@ class RealtimeButton {
   }
 }
 
-const realtimeButton = new RealtimeButton();
-
 document.addEventListener("DOMContentLoaded", () => {
-  realtimeButton.init();
+  const btn = document.getElementById("realtime-toggle");
+  if (!btn) return; // protection
+  // injecte l'ID du log uploadé depuis la page settings
+  btn.dataset.logId = localStorage.getItem("currentLogId") || "";
+  const rt = new RealtimeButton();
+  rt.init();
 });

@@ -4,7 +4,7 @@ from datetime import datetime
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 from ..models.evenement import Evenement
-from ..models.user import Utilisateur
+from ..services.analyseServices.analyseServices import analyzeLogsForAttacks
 from ..services.eventService import EventService
 from .. import limiter
 
@@ -68,3 +68,25 @@ class EventById(Resource):
         except Exception as e:
             return {"msg": f"Erreur lors de la suppression de l'événement: {str(e)}"}, 500
         return {"msg": "Événement supprimé avec succès"}, 200
+
+@event_ns.route('/analyze', methods=['POST'])
+class EventAnalyze(Resource):
+    @jwt_required()
+    @event_ns.response(200, "Analyse des événements lancée")
+    @event_ns.response(400, "Requête invalide")
+    def post(self):
+        """
+        Lance l'analyse des logs pour le fichier donné.
+        Body attendu: { "fichier_log_id": "<UUID>" }
+        """
+        user_id = get_jwt_identity()
+        data = request.get_json() or {}
+        fichier_log_id = data.get('fichier_log_id')
+        if not fichier_log_id:
+            return {"msg": "fichier_log_id manquant"}, 400
+
+        events = analyzeLogsForAttacks(fichier_log_id)
+        return {
+            "events_detected": len(events),
+            "events_created": events
+            }, 200

@@ -47,7 +47,7 @@ class EventService:
             type_evenement=type_evenement,
             fichier_log_id=fichier_log_id,
             url_cible=url_cible,
-            created_at=datetime.utcnow()
+            created_at=datetime.now()
         )
         db.session.add(event)
         db.session.commit()

@@ -21,7 +21,7 @@ class AuthService:
         user = Utilisateur.query.filter_by(email=email).first()
         if not user or not check_password_hash(user.mot_de_passe, password):
             return False, "Email ou mot de passe incorrect"
-        token = create_access_token(identity=user.utilisateur_id, expires_delta=timedelta(seconds=3600))
+        token = create_access_token(identity=user.utilisateur_id)
         return True, token
 
     @staticmethod
@@ -33,8 +33,5 @@ class AuthService:
             return False, "Utilisateur non trouvé"
         
         # Créer un nouveau token
-        new_token = create_access_token(
-            identity=user_id,
-            expires_delta=timedelta(seconds=3600)  # Expire dans 1 heure
-        )
-        return True, new_token
+        newToken = create_access_token(identity=user_id)
+        return True, newToken

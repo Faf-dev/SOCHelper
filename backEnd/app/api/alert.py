@@ -3,6 +3,7 @@ from flask import request
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models.alerte import Alerte
+from ..services.analyseServices.analyseServices import analyzeLogsForAttacks
 from app import limiter
 from app.services.alertService import AlertService
 
@@ -84,3 +85,25 @@ class AlertById(Resource):
         except Exception as e:
             return {"msg": f"Erreur lors de la suppression de l'alerte: {str(e)}"}, 500
         return {"msg": "Alerte supprimé avec succès"}, 200
+
+@alert_ns.route('/analyze', methods=['POST'])
+class AlertAnalyze(Resource):
+    @jwt_required()
+    @alert_ns.response(200, "Analyse des alertes lancée")
+    @alert_ns.response(400, "Requête invalide")
+    def post(self):
+        """
+        Lance l'analyse des logs et crée des alertes pour le fichier donné.
+        Body attendu: { "fichier_log_id": "<UUID>" }
+        """
+        user_id = get_jwt_identity()
+        data = request.get_json() or {}
+        fichier_log_id = data.get('fichier_log_id')
+        if not fichier_log_id:
+            return {"msg": "fichier_log_id manquant"}, 400
+
+        alerts = analyzeLogsForAttacks(fichier_log_id)
+        return {
+            "alerts_detected": len(alerts),
+            "alerts_created": alerts
+        }, 200

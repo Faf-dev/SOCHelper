@@ -1,4 +1,6 @@
 Problemes connu : 
+- Position qui change aléatoire lors de l'arret/reprise de l'analyse en temp réel.
+- Doublon d'analyse
 - deconnexion meme si actif
 - changer de page désactive l'analyse
 - Formulaire html Email/MDP bloqué ~1min après deconnexion
@@ -44,6 +46,8 @@ Reste a faire :
 
 #### /!\ IMPORTANT /!\
 Filtrer la récupération d'evenement et d'alerte en fonction des clés (actuellement : Récupère tout les evenements/alertes de la BDD)
+
+Position à corriger (analyse)
 #### /!\ IMPORTANT /!\
 
   - Ajouter "alerte.status_code" dans le MPD
@@ -53,9 +57,8 @@ Filtrer la récupération d'evenement et d'alerte en fonction des clés (actuell
   - Implémentation des éléments dynamique en HTML/CSS :
       - Alertes :
           - Dernière alerte détecté dans /dashboard
-  - fonction d'analyses
-  - fonction d'évenement détecté
-  - fonction d'alertes
+  - Détecter les brute force
+  - Ajouter un pop up lors d'attaque réussi ou dangereuses
   - Ajouter "evenement.url_cible" dans le MPD
 
 ### Fait la semaine du 23/06 :
@@ -68,6 +71,8 @@ Général :
 
 
 FrontEnd :
+
+    - Adaptation de dashboard.html pour ajouter la colonne "METHODE HTTP"
 
   Script js :
 
@@ -84,6 +89,13 @@ FrontEnd :
       - Ajout de la fonction triggerLogAnalysis qui lance l'analyse du fichier log en même temps que l'analyse de la BDD.
 
 BackEnd :
+
+  model/evenement.py :
+    - Modification -> type_evenement stock désormais le code HTTP et non la tentative d'attaque effectuée.
+
+  services/analyseServices :
+    - Repertorie tout les fichiers lié à l'analyse du fichier access.log (parser, detecteur d'attaque, ...)
+
   services/analyseServices.py :
     - Logique métier pour la lecture du fichier log et la création d'événement et la création d'alertes a partir des résultats obtenues.
 
