@@ -87,7 +87,7 @@ class SimplePagination {
         <td>${heure}</td>
         <td>${event.ip_source}</td>
         <td>${event.type_evenement}</td>
-        <td>${event.url_cible || ''}</td>
+        <td>${window.UrlUtils ? window.UrlUtils.createUrlCell(event.url_cible) : (event.url_cible || '')}</td>
         <td><button class="btn_delete" data-type="event" data-id="${event.evenement_id}"><i class="bi bi-trash3"></i></button></td>
       `;
       tbody.appendChild(tr);
@@ -106,7 +106,7 @@ class SimplePagination {
       const parts = alert.created_at.split("T");
       date = parts[0];
       if (parts[1]) {
-        heure = parts[1].split(".")[0]; // Enlever les millisecondes
+        heure = parts[1].split(".")[0];
       }
     }
       
@@ -116,7 +116,7 @@ class SimplePagination {
         <td>${alert.ip_source}</td>
         <td>${alert.type_evenement}</td>
         <td>${alert.status_code !== null ? alert.status_code : 'N/A'}</td>
-        <td>${alert.url_cible}</td>
+        <td>${window.UrlUtils ? window.UrlUtils.createUrlCell(alert.url_cible) : (alert.url_cible || '')}</td>
         <td><button class="btn_delete" data-type="alert" data-id="${alert.alerte_id}"><i class="bi bi-trash3"></i></button></td>
       `;
       tbody.appendChild(tr);

@@ -222,6 +222,70 @@ hr {
   pointer-events: none;
 }
 
+/* Gestion des URLs longues */
+.url-cell {
+  max-width: 250px;
+  position: relative;
+  cursor: help;
+}
+
+.url-text {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tooltip pour URL complète */
+.url-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-width: 400px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+  border: 1px solid #444;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.url-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #1a1a1a;
+}
+
+.url-cell:hover .url-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Animation pour nouveaux événements avec URLs tronquées */
+.new-event .url-cell {
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.new-alert .url-cell {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .container {
