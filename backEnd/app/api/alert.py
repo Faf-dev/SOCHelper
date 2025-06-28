@@ -3,7 +3,7 @@ from flask import request
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models.alerte import Alerte
-from ..services.analyseServices.analyseServices import analyzeLogsForAttacks
+from ..services.analyseServices.analyseService import analyzeLogsForAttacks
 from app import limiter
 from app.services.alertService import AlertService
 

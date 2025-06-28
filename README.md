@@ -1,4 +1,5 @@
 Problemes connu : 
+- Erreur 500 si tentative de suppression d'un evenement liée à une alerte (fonctionnel dans l'autre sens)
 - Position qui change aléatoire lors de l'arret/reprise de l'analyse en temp réel.
 - Doublon d'analyse
 - deconnexion meme si actif

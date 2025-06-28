@@ -4,7 +4,7 @@ from datetime import datetime
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 from ..models.evenement import Evenement
-from ..services.analyseServices.analyseServices import analyzeLogsForAttacks
+from ..services.analyseServices.analyseService import analyzeLogsForAttacks
 from ..services.eventService import EventService
 from .. import limiter
 
