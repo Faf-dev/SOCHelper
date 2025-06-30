@@ -10,6 +10,10 @@ settings_ns = Namespace("settings", description="Upload de fichiers et analyse")
 @settings_ns.route('/')
 class Upload(Resource):
     @jwt_required()
+    @settings_ns.response(200, "Fichier reçu et analyse lancée")
+    @settings_ns.response(400, "Chemin du fichier ou type de serveur non fourni")
+    @settings_ns.response(404, "Utilisateur non trouvé")
+    @settings_ns.response(500, "Erreur lors du traitement")
     def post(self):
         userId = get_jwt_identity()
         user = Utilisateur.query.get(userId)
@@ -39,6 +43,8 @@ class Upload(Resource):
 @settings_ns.route('/logs/<string:log_id>/activate')
 class LogActivate(Resource):
     @jwt_required()
+    @settings_ns.response(200, "Fichier log activé")
+    @settings_ns.response(404, "Fichier log non trouvé")
     def post(self, log_id):
         """Active un fichier log pour l'analyse"""
         user_id = get_jwt_identity()
@@ -51,6 +57,8 @@ class LogActivate(Resource):
 @settings_ns.route('/logs')
 class LogList(Resource):
     @jwt_required()
+    @settings_ns.response(200, "Liste des fichiers logs récupérée")
+    @settings_ns.response(500, "Erreur lors de la récupération des logs")
     def get(self):
         """Récupère tous les fichiers logs de l'utilisateur"""
         try:
@@ -66,6 +74,9 @@ class LogList(Resource):
 @settings_ns.route('/logs/<string:log_id>')
 class LogDetail(Resource):
     @jwt_required()
+    @settings_ns.response(200, "Fichier log supprimé")
+    @settings_ns.response(404, "Fichier log non trouvé ou erreur lors de la suppression")
+    @settings_ns.response(500, "Erreur lors de la suppression du fichier log")
     def delete(self, log_id):
         """Supprime un fichier log par son ID"""
         try:
@@ -80,6 +91,9 @@ class LogDetail(Resource):
             return {"msg": f"Erreur lors de la suppression du fichier log : {str(e)}"}, 500
 
     @jwt_required()
+    @settings_ns.response(200, "Détails du fichier log récupérés")
+    @settings_ns.response(404, "Fichier log non trouvé")
+    @settings_ns.response(500, "Erreur lors de la récupération du fichier log")
     def get(self, log_id):
         """Récupère les détails d'un fichier log spécifique"""
         try:
