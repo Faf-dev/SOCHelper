@@ -145,6 +145,13 @@ class RealtimeButton {
       
       tbody.insertBefore(tr, tbody.firstChild);
     });
+    
+    // Rafraîchir la pagination après l'ajout des nouveaux événements
+    if (events.length > 0 && window.globalPagination) {
+      setTimeout(() => {
+        window.globalPagination.refreshPagination();
+      }, 100);
+    }
   }
 
   addNewAlertsToTop(alerts) {
@@ -177,6 +184,12 @@ class RealtimeButton {
       
       tbody.insertBefore(tr, tbody.firstChild);
     });
+
+    if (alerts.length > 0 && window.globalPagination) {
+      setTimeout(() => {
+        window.globalPagination.refreshPagination();
+      }, 100);
+    }
   }
 
   updateButtonState() {

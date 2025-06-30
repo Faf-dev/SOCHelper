@@ -1,7 +1,7 @@
 let alertsPagination;
 
 document.addEventListener("DOMContentLoaded", () => {
-  alertsPagination = new SimplePagination('http://localhost:5000/api/alert/', 5);
+  alertsPagination = new SimplePagination('http://localhost:5000/api/alert/', 10);
   window.globalPagination = alertsPagination;
   alertsPagination.init();
 });
