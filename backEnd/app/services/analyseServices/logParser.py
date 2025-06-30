@@ -36,8 +36,6 @@ def parseSingleLine(line):
     if len(quoteParts) >= 3:
         afterQuoteParts = quoteParts[2].split()
         statusCode = afterQuoteParts[0] if afterQuoteParts else "000"
-    else:
-       statusCode = "000"  # Code HTTP par défaut si non trouvé
     
     return {
         'ip': ip,
