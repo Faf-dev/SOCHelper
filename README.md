@@ -9,14 +9,14 @@
 ## 🚨 Problèmes connus
 
 - Certain url raccourci n'affiche pas l'url complet au survol
-- Les nouvelles entrée ne sont pas prise en compte par l'analyse
+- Les nouvelles entrée ne sont pas prise en compte par l'analyse ✅ Patch
 - Erreur 500 si tentative de suppression d'un evenement liée à une alerte (fonctionnel dans l'autre sens)
-- Position qui change aléatoire lors de l'arret/reprise de l'analyse en temp réel.
-- Doublon d'analyse
-- deconnexion meme si actif
+- Position qui change aléatoire lors de l'arret/reprise de l'analyse en temp réel. ✅ Patch
+- Doublon d'analyse ✅ Patch (normalement)
+- deconnexion meme si actif ✅ Patch
 - changer de page désactive l'analyse
 - Formulaire html Email/MDP bloqué ~1min après deconnexion
-- Un token est toujours stocké dans localStorage (normalement SessionStorage)
+- Un token est toujours stocké dans localStorage (normalement SessionStorage) ✅ Patch
 
 ---
 
@@ -64,12 +64,9 @@
 ### ⚠️ IMPORTANT ⚠️
 **Filtrer la récupération d'evenement et d'alerte en fonction des clés (actuellement : Récupère tout les evenements/alertes de la BDD)**
 **Les nouvelles entrée ne sont pas prise en compte par l'analyse**
-**Position à corriger (analyse)**
 
 ### Autres tâches
 - Retirer Postgresql et mettre SQLite dans la doc
-- Ajouter "alerte.status_code" dans le MPD
-- Mettre les api.response dans settings.py (api)
 - Fix la page settings.html (drag & drop et selection de fichier log)
 - Changer la methode de stockage du limiter (actuel = ram, a faire : Redis, memcached, etc..)
 - Implémentation des éléments dynamique en HTML/CSS :
@@ -77,7 +74,6 @@
         - Dernière alerte détecté dans /dashboard
 - Détecter les brute force
 - Ajouter un pop up lors d'attaque réussi ou dangereuses
-- Ajouter "evenement.url_cible" dans le MPD
 
 ---
 
@@ -88,6 +84,10 @@
 **Changement de BDD : PostgreSQL -> SQLite (Justification du choix en bas du README.md)**
 
 - Amélioration de la lisibilité du README.md
+- Ajouter "alerte.status_code", "evenement.url_cible" dans le MPD
+- Les nouveaux logs sont maintenant pris en compte dans l'analyse
+- La pagination et l'urlUtils se mettent a jour sans refresh manuellement la page
+- Correction de la position (Ajout de **fichier_log.current_position** pour sauvegarder la position de l'analyse en BDD)
 - Creation d'index en BDD pour retrouver des elements + rapidement (ex : `events = Evenement.query.filter_by(ip_source='203.0.113.45').all()` Sans index = 2 à 3 secondes, Avec index = 0,1 seconde)
 - Modification du modele Alert :
   - Ajout d'une colonne "status_code" pour savoir si l'attaquant a échoué ou non.
@@ -99,6 +99,10 @@
 - Adaptation de alert.html pour ajouter la colonne "CODE HTTP"
 
 #### Script js
+
+**urlUtils.js :**
+- Tronque les URL long pour garder un affichage propre (limite: 45 carac)
+- Affiche l'URL complète au survol via un tooltip
 
 **getLogPath.js :**
 - Récupère le chemin du fichier log et le type de serveur pour l'afficher dynamiquement à coté de l'utilisateur connecté dans l'en-tête.

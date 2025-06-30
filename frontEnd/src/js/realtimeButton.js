@@ -11,7 +11,7 @@ class RealtimeButton {
     
     this.triggerLogAnalysis();
     this.fetchNewData();
-    this.pollingInterval = setInterval(() => this.fetchNewData(), 500);
+    this.pollingInterval = setInterval(() => this.fetchNewData(), 1000); // 2 secondes au lieu de 500ms
     this.isRealTimeActive = true;
     this.updateButtonState();
     
@@ -41,8 +41,6 @@ class RealtimeButton {
     const token = sessionStorage.getItem("token");
     if (!token) return;
 
-    // Récupérez ici votre fichier_log_id,  
-    // par exemple depuis un data-attribute du bouton :
     const btn = document.getElementById('realtime-toggle');
     const fichier_log_id = btn.dataset.logId;  
     if (!fichier_log_id) return;
@@ -72,6 +70,8 @@ class RealtimeButton {
     }
 
     try {
+      await this.triggerLogAnalysis();
+      
       const currentPage = window.location.pathname;
       let url;
       
@@ -145,13 +145,6 @@ class RealtimeButton {
       
       tbody.insertBefore(tr, tbody.firstChild);
     });
-    
-    // Rafraîchir la pagination après l'ajout des nouveaux événements
-    if (events.length > 0 && window.globalPagination) {
-      setTimeout(() => {
-        window.globalPagination.refreshPagination();
-      }, 100);
-    }
   }
 
   addNewAlertsToTop(alerts) {
@@ -184,12 +177,6 @@ class RealtimeButton {
       
       tbody.insertBefore(tr, tbody.firstChild);
     });
-
-    if (alerts.length > 0 && window.globalPagination) {
-      setTimeout(() => {
-        window.globalPagination.refreshPagination();
-      }, 100);
-    }
   }
 
   updateButtonState() {

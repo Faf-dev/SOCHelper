@@ -3,10 +3,11 @@ from .detectSQLInjection import detectSQLInjection
 from ..eventService import EventService
 from ..alertService import AlertService
 from ...models.fichier_log import FichierLog
+from app import db
 import time
 import os
 
-def analyzeLogsForAttacks(fichierLogId, startPosition=0):
+def analyzeLogsForAttacks(fichierLogId, startPosition=None):
     """
     Analyse tous les logs, détecte les attaques et crée
     un Evenement pour chaque attaque associée à fichier_log_id.
@@ -14,6 +15,10 @@ def analyzeLogsForAttacks(fichierLogId, startPosition=0):
     fichier = FichierLog.query.get(fichierLogId)
     if not fichier:
         return [], 0
+
+    # Si aucune position n'est spécifiée, utiliser la position sauvegardée
+    if startPosition is None:
+        startPosition = fichier.current_position or 0
 
     analyzedLines = []
     attackDetected = []
@@ -46,6 +51,9 @@ def analyzeLogsForAttacks(fichierLogId, startPosition=0):
                         attackDetected.append(alert)
                     analyzedLines.append(event)
                     time.sleep(0.5)
+
+    fichier.current_position = newPosition
+    db.session.commit()
 
     return analyzedLines, newPosition, attackDetected
 
