@@ -3,3 +3,5 @@
 /frontEnd/node_modules
 __pycache__
 *.Identifier
+soc_helper.db
+*.db

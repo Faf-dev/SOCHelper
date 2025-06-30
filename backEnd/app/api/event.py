@@ -9,10 +9,9 @@ from ..services.eventService import EventService
 from .. import limiter
 
 
-# Création du namespace
+
 event_ns = Namespace("event", description="Opérations sur les événements")
 
-# Modèle pour la validation d'entrée (Swagger + vérification auto)
 event_model = event_ns.model('Event', {
     "ip_source": fields.String(required=True, description="Adresse IP source"),
     "type_evenement": fields.String(required=True, description="Type d'événement"),

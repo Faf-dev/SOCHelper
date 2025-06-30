@@ -7,7 +7,7 @@ class Alerte(db.Model):
     __tablename__ = 'alertes'
 
     alerte_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    ip_source = db.Column(db.String(15), nullable=False)
+    ip_source = db.Column(db.String(45), nullable=False)  # 45 chars pour IPv6
     type_evenement = db.Column(db.String(255), nullable=False)
     status_code = db.Column(db.Integer, nullable=True)
     evenement_id = db.Column(db.String(36), db.ForeignKey('evenements.evenement_id'))
