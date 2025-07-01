@@ -1,4 +1,5 @@
 from app.models.evenement import Evenement
+from app.models.fichier_log import FichierLog
 from app.models.user import Utilisateur
 from app import db
 from datetime import datetime
@@ -69,3 +70,11 @@ class EventService:
             "limit": per_page,
             "total_events": pagination.total
     }
+    
+    @staticmethod
+    def getEventsByFichierLog(user_id, fichier_log_id):
+        fichier_log = FichierLog.query.filter_by(fichier_log_id=fichier_log_id, user_id=user_id).first()
+        if not fichier_log:
+            return []
+        evenements = Evenement.query.filter_by(fichier_log_id=fichier_log_id).all()
+        return [e.to_dict() for e in evenements]

@@ -32,7 +32,12 @@ class Event(Resource):
     @event_ns.param('since', 'Timestamp ISO pour récupérer seulement les nouveaux événements', type='string', required=False)
     def get(self):
         user_id = get_jwt_identity()
+        fichier_log_id = request.args.get('fichier_log_id')
         since = request.args.get('since')
+        
+        if fichier_log_id:
+            events = EventService.getEventsByFichierLog(user_id, fichier_log_id)
+            return events, 200
         
         if since:
             try:

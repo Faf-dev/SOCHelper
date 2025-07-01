@@ -1,5 +1,6 @@
 from app.models.alerte import Alerte
 from app.models.user import Utilisateur
+from app.models.evenement import Evenement
 from app import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
@@ -84,4 +85,14 @@ class AlertService:
             "page": page,
             "limit": per_page,
             "total_alerts": pagination.total
-    }
+        }
+
+    @staticmethod 
+    def getAlertesByFichierLog(fichier_log_id):
+        evenements = Evenement.query.filter_by(fichier_log_id=fichier_log_id).all()
+        evenement_ids = [e.evenement_id for e in evenements]
+        if not evenement_ids:
+            return []
+
+        alertes = Alerte.query.filter(Alerte.evenement_id.in_(evenement_ids)).all()
+        return [a.to_dict() for a in alertes]
