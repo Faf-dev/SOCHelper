@@ -15,7 +15,14 @@ jwt = JWTManager()
 
 
 def createApp(configName=None):
-    load_dotenv()
+    # Détermine le bon chemin du .env selon le contexte (dev ou .exe)
+    if getattr(sys, 'frozen', False):
+        # Application packagée (.exe)
+        env_path = os.path.join(os.path.dirname(sys.executable), '.env')
+    else:
+        # Dev : .env à la racine du projet
+        env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+    load_dotenv(env_path)
 
     app = Flask(__name__)
     CORS(app)

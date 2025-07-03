@@ -204,16 +204,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // Stocke l'ID du fichier log pour le dashboard
         localStorage.setItem("currentLogId", data.id);
         console.log("ID stocké :", data.id);
-        alert("Analyse lancée avec succès !");
+        alert("Fichier enregistré avec succès !");
         console.log("Réponse de l'API :", data);
         window.location.href = "dashboard.html";
       } else {
         const error = await res.json();
-        alert("Erreur lors de l'analyse : " + error.msg);
+        alert("Erreur lors de l'upload : " + error.msg);
       }
     } catch (err) {
       console.error("Erreur lors de l'envoi à l'API :", err);
       alert("Une erreur est survenue. Veuillez réessayer.");
     }
   });
+
 });

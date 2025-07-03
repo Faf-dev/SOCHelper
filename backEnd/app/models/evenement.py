@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class Evenement(db.Model):
-    __tablename__ = 'evenements'
+    tablename = 'evenements'
 
     evenement_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     ip_source = db.Column(db.String(45), nullable=False)  # 45 chars pour IPv6

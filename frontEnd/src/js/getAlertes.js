@@ -35,7 +35,7 @@ function updateAlertsTable(alerts) {
     `;
     tbody.insertBefore(tr, tbody.firstChild);
   });
-  
+
   if (alerts.length > 0 && window.globalPagination) {
     setTimeout(() => window.globalPagination.refreshPagination(), 100);
   }

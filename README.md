@@ -66,9 +66,6 @@
 **Les nouvelles entrée ne sont pas prise en compte par l'analyse**
 
 ### Autres tâches
-- Retirer Postgresql et mettre SQLite dans la doc
-- Fix la page settings.html (drag & drop et selection de fichier log)
-- Changer la methode de stockage du limiter (actuel = ram, a faire : Redis, memcached, etc..)
 - Implémentation des éléments dynamique en HTML/CSS :
     - Alertes :
         - Dernière alerte détecté dans /dashboard
@@ -76,6 +73,23 @@
 - Ajouter un pop up lors d'attaque réussi ou dangereuses
 
 ---
+
+
+## 📅 Fait la semaine du 30/06
+- Pitch demo day
+- Documentation technique pour le jury
+- Diapo demo day
+
+- Fix de la position du log parser et de l'analyse en ajoutant une colonne current_position dans la table fichier_log
+- Ajout de notification système lors de la réception d'une alerte via Notification (electron) difficulté car non testable sur WSL
+- Fix d'erreur 500 si l'ip parsé n'est pas valide (remplacé par "??.??.??.??")
+- Fix des textes incohérents dans la page settings : Lancez l'analyse -> Enregistrez votre fichier et Analyse lancé avec succès ! -> - Fichier enregistré avec succès !
+- main.js et le package.json modifier pour pouvoir compiler
+- Fix problème de "sautement" visuel lors de l'analyse
+- Fix de la pagination
+
+---
+
 
 ## 📅 Fait la semaine du 23/06
 

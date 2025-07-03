@@ -4,6 +4,7 @@ from ..eventService import EventService
 from ..alertService import AlertService
 from ...models.fichier_log import FichierLog
 from app import db
+import json
 import time
 import os
 
@@ -49,8 +50,16 @@ def analyzeLogsForAttacks(fichierLogId, startPosition=None):
                             evenement_id=event['evenement_id'],
                         )
                         attackDetected.append(alert)
-                    analyzedLines.append(event)
-                    time.sleep(0.5)
+                        print(json.dumps({
+                            "type": "sqlInjection",
+                            "data": {
+                                "ip": event['ip_source'],
+                                "date": parsedLog['date'],
+                                "heure": parsedLog['heure']
+                            }
+                            }), flush=True)
+                        print(f"DEBUG: IP envoyée = '{event['ip_source']}'", flush=True)
+                    time.sleep(1)
 
     fichier.current_position = newPosition
     db.session.commit()

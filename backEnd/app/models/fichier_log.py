@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class FichierLog(db.Model):
-    __tablename__ = 'fichier_log'
+    tablename = 'fichier_log'
 
     fichier_log_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     chemin = db.Column(db.Text, nullable=False)

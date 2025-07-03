@@ -1,19 +1,46 @@
 {
-  "name": "frontend",
+  "name": "sochelper",
   "version": "1.0.0",
   "main": "src/js/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dist": "electron-builder",
     "start": "electron --no-sandbox ."
   },
   "keywords": [],
-  "author": "Faf-dev, Etiennepev",
+  "author": "Faf-dev",
   "license": "ISC",
-  "description": "Frontend Electron for SOC Helper project",
+  "description": "SOC Helper - Outil d'analyse de logs",
   "devDependencies": {
-    "@babel/preset-env": "^7.27.2",
     "electron": "^36.4.0",
-    "eslint": "^9.28.0",
-    "jest-environment-jsdom": "^30.0.2"
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.28.0"
+  },
+  "build": {
+    "appId": "com.sochelper.app",
+    "productName": "SOC Helper",
+    "files": [
+      "dist/run.exe",
+      "src/**/*",
+      "package.json",
+      "main.js"
+    ],
+      "extraResources": [
+    {
+      "from": "dist/run.exe",
+      "to": "run.exe"
+    },
+    {
+      "from": "dist/.env",
+      "to": ".env"
+    }
+  ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/logo.ico"
+    }
   }
 }
