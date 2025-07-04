@@ -172,7 +172,7 @@ hr {
   border-radius: 4px;
   color: #ffcccc;
   font-weight: bold;
-  display: flex;
+  display: none;
   align-items: center;
   gap: 10px;
 }

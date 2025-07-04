@@ -107,3 +107,26 @@ class AlertAnalyze(Resource):
             "alerts_detected": len(alerts),
             "alerts_created": alerts
         }, 200
+
+@alert_ns.route('/latest', methods=['GET'])
+class LatestAlert(Resource):
+    @limiter.exempt
+    @alert_ns.response(200, "Dernière alerte récupérée")
+    @alert_ns.response(404, "Aucune alerte trouvée")
+    def get(self):
+        """Récupère la toute dernière alerte créée (sans filtrage utilisateur)"""
+        
+        # Récupérer la dernière alerte créée (toutes confondues)
+        latestAlert = Alerte.query.order_by(Alerte.created_at.desc()).first()
+        
+        if latestAlert is None:
+            return {"msg": "Aucune alerte trouvée"}, 404
+            
+        # Retourner les données formatées pour le frontend
+        return {
+            "ip": latestAlert.ip_source,
+            "date": latestAlert.created_at.strftime("%d/%m/%Y"),
+            "time": latestAlert.created_at.strftime("%H:%M:%S"),
+            "attackType": latestAlert.type_evenement,
+            "alerte_id": latestAlert.alerte_id
+        }, 200
