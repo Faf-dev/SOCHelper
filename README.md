@@ -83,7 +83,7 @@
 - Fix de la position du log parser et de l'analyse en ajoutant une colonne current_position dans la table fichier_log
 - Ajout de notification système lors de la réception d'une alerte via Notification (electron) difficulté car non testable sur WSL
 - Fix d'erreur 500 si l'ip parsé n'est pas valide (remplacé par "??.??.??.??")
-- Fix des textes incohérents dans la page settings : Lancez l'analyse -> Enregistrez votre fichier et Analyse lancé avec succès ! -> - Fichier enregistré avec succès !
+- Fix des textes incohérents dans la page settings : Lancez l'analyse -> Enregistrez votre fichier et Analyse lancé avec succès ! ->  Fichier enregistré avec succès !
 - main.js et le package.json modifier pour pouvoir compiler
 - Fix problème de "sautement" visuel lors de l'analyse
 - Fix de la pagination

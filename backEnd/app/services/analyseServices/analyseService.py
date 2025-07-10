@@ -1,5 +1,6 @@
 from .logParser import parseSingleLine
 from .detectSQLInjection import detectSQLInjection
+from .detectBrutForce import detectBrutForce
 from ..eventService import EventService
 from ..alertService import AlertService
 from ...models.fichier_log import FichierLog
@@ -30,36 +31,101 @@ def analyzeLogsForAttacks(fichierLogId, startPosition=None):
         newContent = f.read()
         newPosition = f.tell()
         
+        parsedLogs = []
+        eventsByIp = {}  # Pour grouper les événements par IP
+        
         if newContent.strip():
             # Traiter seulement les nouvelles lignes
             for line in newContent.strip().split('\n'):
                 parsedLog = parseSingleLine(line)  # Fonction helper
                 if parsedLog:
-                    event = EventService.createEvent(
-                        ip_source=parsedLog['ip'],
-                        type_evenement=parsedLog['method'],
-                        fichier_log_id=fichierLogId,
-                        url_cible=parsedLog['url'],
-                    )
-                    if detectSQLInjection(parsedLog['url']):
-                        alert = AlertService.createAlerte(
-                            ip_source=event['ip_source'],
-                            type_evenement='Injection SQL',
-                            fichier_log_id=fichierLogId,
-                            status_code=parsedLog['status_code'],
-                            evenement_id=event['evenement_id'],
-                        )
-                        attackDetected.append(alert)
-                        print(json.dumps({
-                            "type": "sqlInjection",
-                            "data": {
-                                "ip": event['ip_source'],
-                                "date": parsedLog['date'],
-                                "heure": parsedLog['heure']
+                    parsedLogs.append(parsedLog)
+                    
+                    # Vérifie si c'est une tentative de brut force (401/403 ou login)
+                    statusCode = str(parsedLog.get('status_code', ''))
+                    url = parsedLog.get('url', '').lower()
+                    isBruteForceAttempt = (statusCode in ['401', '403'] or 'login' in url)
+                    
+                    if isBruteForceAttempt:
+                        ip = parsedLog['ip']
+                        if ip not in eventsByIp:
+                            eventsByIp[ip] = {
+                                'count': 0,
+                                'status_code': statusCode,
+                                'url': parsedLog['url'],
+                                'method': parsedLog['method']
                             }
+                        eventsByIp[ip]['count'] += 1
+                    else:
+                        # Créer un événement normal pour les non-brute force
+                        event = EventService.createEvent(
+                            ipSource=parsedLog['ip'],
+                            typeEvenement=parsedLog['method'],
+                            fichierLogId=fichierLogId,
+                            urlCible=parsedLog['url'],
+                        )
+                        analyzedLines.append(event)
+                        
+                        # Détection SQL injection
+                        if detectSQLInjection(parsedLog['url']):
+                            alert = AlertService.createAlerte(
+                                ipSource=event['ip_source'],
+                                typeEvenement='Injection SQL',
+                                fichierLogId=fichierLogId,
+                                statusCode=parsedLog['status_code'],
+                                evenementId=event['evenement_id'],
+                            )
+                            attackDetected.append(alert)
+                            print(json.dumps({
+                                "type": "sqlInjection",
+                                "data": {
+                                    "ip": event['ip_source'],
+                                    "date": parsedLog['date'],
+                                    "heure": parsedLog['heure']
+                                }
                             }), flush=True)
-                        print(f"DEBUG: IP envoyée = '{event['ip_source']}'", flush=True)
-                    time.sleep(1)
+
+        # Créer un seul événement par IP pour les tentatives de brute force
+        eventsByIpCreated = {}  # Pour stocker les événements créés par IP
+        for ip, data in eventsByIp.items():
+            event = EventService.createEvent(
+                ipSource=ip,
+                typeEvenement=f"{data['method']} ({data['count']} tentatives)",
+                fichierLogId=fichierLogId,
+                urlCible=data['url'],
+            )
+            analyzedLines.append(event)
+            eventsByIpCreated[ip] = event  # Sauvegarder l'événement pour cette IP
+
+        # Détection brut force après la boucle
+        suspects = detectBrutForce(parsedLogs)
+        for ip, nbAttempts in suspects:
+            # Récupère le status code et l'événement de cette IP
+            statusCode = eventsByIp.get(ip, {}).get('status_code', '401')
+            urlCible = eventsByIp.get(ip, {}).get('url', '/login')
+            evenementId = eventsByIpCreated.get(ip, {}).get('evenement_id', None)
+            
+            alert = AlertService.createAlerte(
+                ipSource=ip,
+                typeEvenement=f'Brut force ({nbAttempts} tentatives)',
+                fichierLogId=fichierLogId,
+                statusCode=statusCode,
+                urlCible=urlCible,
+                evenementId=evenementId,
+            )
+            attackDetected.append(alert)
+            # Récupère la première tentative pour la date/heure
+            firstAttempt = next((log for log in parsedLogs if log['ip'] == ip), {})
+            print(json.dumps({
+                "type": "brutForce",
+                "data": {
+                    "ip": ip,
+                    "attempts": nbAttempts,
+                    "date": firstAttempt.get('date', ''),
+                    "heure": firstAttempt.get('heure', ''),
+                    "statusCode": statusCode
+                }
+             }), flush=True)
 
     fichier.current_position = newPosition
     db.session.commit()

@@ -55,13 +55,13 @@ class AlertService:
         return True
 
     @staticmethod
-    def createAlerte(ip_source, type_evenement, fichier_log_id, status_code, url_cible=None, evenement_id=None):
+    def createAlerte(ipSource, typeEvenement, fichierLogId, statusCode, urlCible=None, evenementId=None):
         """Crée une nouvelle alerte"""
         alert = Alerte(
-            ip_source=ip_source,
-            type_evenement=type_evenement,
-            status_code=status_code,
-            evenement_id=evenement_id,
+            ip_source=ipSource,
+            type_evenement=typeEvenement,
+            status_code=statusCode,
+            evenement_id=evenementId,
             created_at=datetime.now()
         )
         db.session.add(alert)

@@ -43,6 +43,10 @@ function startBackend() {
             const { ip, date, heure } = message.data;
             console.log("Déclenchement notification SQL injection pour:", ip);
             notificationManager.showSQLInjectionAlert(ip, date, heure);
+          } else if (message.type === "brutForce") {
+            const { ip, attempts, date, heure } = message.data;
+            console.log("Déclenchement notification brute force pour:", ip, "avec", attempts, "tentatives");
+            notificationManager.showBruteForceAlert(ip, attempts, date, heure);
           }
         } catch (error) {
           console.error("Erreur de parsing JSON:", error);

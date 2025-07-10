@@ -29,7 +29,12 @@ function getLastAlert() {
         .then(response => response.json())
         .then(data => {
             if (data && data.ip) {
-                const message = `<span class="icon"><i class="bi bi-exclamation-square"></i></span><strong>ALERTE:</strong> Tentative ${data.attackType} détectée depuis <strong>${data.ip}</strong> – Le ${data.date} à ${data.time}`;
+                let message;
+                if (data.attackType === "brute force") {
+                    message = `<span class="icon"><i class="bi bi-exclamation-triangle-fill"></i></span><strong>ALERTE:</strong> Tentative ${data.attackType} détectée depuis <strong>${data.ip}</strong> (${data.type_evenement}) – Le ${data.date} à ${data.time}`;
+                } else {
+                    message = `<span class="icon"><i class="bi bi-exclamation-square"></i></span><strong>ALERTE:</strong> Tentative ${data.attackType} détectée depuis <strong>${data.ip}</strong> – Le ${data.date} à ${data.time}`;
+                }
                 showAlert(message);
             } else {
                 hideAlert();

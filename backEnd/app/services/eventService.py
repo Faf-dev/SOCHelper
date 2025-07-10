@@ -1,7 +1,7 @@
 from app.models.evenement import Evenement
 from app.models.user import Utilisateur
 from app import db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class EventService:
@@ -40,13 +40,13 @@ class EventService:
         return True
 
     @staticmethod
-    def createEvent(ip_source, type_evenement, fichier_log_id, url_cible=None):
+    def createEvent(ipSource, typeEvenement, fichierLogId, urlCible=None):
         """Crée un nouvel événement"""
         event = Evenement(
-            ip_source=ip_source,
-            type_evenement=type_evenement,
-            fichier_log_id=fichier_log_id,
-            url_cible=url_cible,
+            ip_source=ipSource,
+            type_evenement=typeEvenement,
+            fichier_log_id=fichierLogId,
+            url_cible=urlCible,
             created_at=datetime.now()
         )
         db.session.add(event)
@@ -69,3 +69,33 @@ class EventService:
             "limit": per_page,
             "total_events": pagination.total
     }
+    @staticmethod
+    def createEventIfNotExists(ipSource, typeEvenement, fichierLogId, urlCible=None, createdAt=None):
+        """Crée un nouvel événement s'il n'existe pas déjà pour cette ligne de log"""
+        if createdAt is None:
+            createdAt = datetime.now()
+
+        # On cherche un événement créé dans la même seconde avec les mêmes données
+        existing = Evenement.query.filter(
+            Evenement.ip_source == ipSource,
+            Evenement.type_evenement == typeEvenement,
+            Evenement.fichier_log_id == fichierLogId,
+            Evenement.url_cible == urlCible,
+            # On regarde seulement les événements créés dans la même seconde
+            Evenement.created_at >= createdAt - timedelta(seconds=1),
+            Evenement.created_at <= createdAt + timedelta(seconds=1)
+        ).first()
+
+        if existing:
+            return existing.to_dict()
+
+        event = Evenement(
+            ip_source=ipSource,
+            type_evenement=typeEvenement,
+            fichier_log_id=fichierLogId,
+            url_cible=urlCible,
+            created_at=createdAt
+        )
+        db.session.add(event)
+        db.session.commit()
+        return event.to_dict()
