@@ -23,11 +23,11 @@ alerte_model = alert_ns.model('Alerte', {
 class Alert(Resource):
     @jwt_required()
     @limiter.exempt
-    @alert_ns.response(200, "Événements récupérés avec succès")
+    @alert_ns.response(200, "Alertes récupérés avec succès")
     @alert_ns.response(404, "Utilisateur non trouvé")
     @alert_ns.param('page', 'Numéro de page', type='int', required=False)
-    @alert_ns.param('per_page', 'Événements par page', type='int', required=False)
-    @alert_ns.param('since', 'Timestamp ISO pour récupérer seulement les nouveaux événements', type='string', required=False)
+    @alert_ns.param('per_page', 'Alertes par page', type='int', required=False)
+    @alert_ns.param('since', 'Timestamp ISO pour récupérer seulement les nouvelles alertes', type='string', required=False)
     def get(self):
         user_id = get_jwt_identity()
         since = request.args.get('since')
@@ -86,6 +86,7 @@ class AlertById(Resource):
             return {"msg": f"Erreur lors de la suppression de l'alerte: {str(e)}"}, 500
         return {"msg": "Alerte supprimé avec succès"}, 200
 
+
 @alert_ns.route('/analyze', methods=['POST'])
 class AlertAnalyze(Resource):
     @jwt_required()
@@ -102,10 +103,12 @@ class AlertAnalyze(Resource):
         if not fichier_log_id:
             return {"msg": "fichier_log_id manquant"}, 400
 
-        alerts = analyzeLogsForAttacks(fichier_log_id)
+        events, new_position, alerts = analyzeLogsForAttacks(fichier_log_id)
         return {
             "alerts_detected": len(alerts),
-            "alerts_created": alerts
+            "alerts_created": alerts,
+            "events_detected": len(events),
+            "new_position": new_position
         }, 200
 
 @alert_ns.route('/latest', methods=['GET'])
@@ -117,16 +120,16 @@ class LatestAlert(Resource):
         """Récupère la toute dernière alerte créée (sans filtrage utilisateur)"""
         
         # Récupérer la dernière alerte créée (toutes confondues)
-        latestAlert = Alerte.query.order_by(Alerte.created_at.desc()).first()
+        latest_alert = Alerte.query.order_by(Alerte.created_at.desc()).first()
         
-        if latestAlert is None:
+        if latest_alert is None:
             return {"msg": "Aucune alerte trouvée"}, 404
             
         # Retourner les données formatées pour le frontend
         return {
-            "ip": latestAlert.ip_source,
-            "date": latestAlert.created_at.strftime("%d/%m/%Y"),
-            "time": latestAlert.created_at.strftime("%H:%M:%S"),
-            "attackType": latestAlert.type_evenement,
-            "alerte_id": latestAlert.alerte_id
+            "ip": latest_alert.ip_source,
+            "date": latest_alert.created_at.strftime("%d/%m/%Y"),
+            "time": latest_alert.created_at.strftime("%H:%M:%S"),
+            "attackType": latest_alert.type_evenement,
+            "alerte_id": latest_alert.alerte_id
         }, 200

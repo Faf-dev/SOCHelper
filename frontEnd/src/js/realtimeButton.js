@@ -9,9 +9,11 @@ class RealtimeButton {
   start() {
     if (this.isRealTimeActive) return;
     
+    // UNE SEULE analyse au démarrage
     this.triggerLogAnalysis();
-    this.fetchNewData();
-    this.pollingInterval = setInterval(() => this.fetchNewData(), 1000); // 2 secondes au lieu de 500ms
+    
+    // Puis polling pour les nouvelles données seulement
+    this.pollingInterval = setInterval(() => this.fetchNewData(), 2000);
     this.isRealTimeActive = true;
     this.updateButtonState();
     
@@ -70,46 +72,17 @@ class RealtimeButton {
     }
 
     try {
+      // Vérifier s'il y a de nouvelles données dans le fichier de log
+      // en déclenchant une analyse qui ne traitera que les nouvelles lignes
       await this.triggerLogAnalysis();
       
-      const currentPage = window.location.pathname;
-      let url;
+      // Rafraîchir la pagination pour afficher les nouveaux événements
+      if (window.globalPagination) {
+        window.globalPagination.refreshPagination();
+      }
       
-      if (currentPage.includes('dashboard') || currentPage.includes('event')) {
-        url = this.lastUpdateTime 
-          ? `http://localhost:5000/api/event/?since=${this.lastUpdateTime}`
-          : "http://localhost:5000/api/event";
-      } else if (currentPage.includes('alert')) {
-        url = this.lastUpdateTime 
-          ? `http://localhost:5000/api/alert/?since=${this.lastUpdateTime}`
-          : "http://localhost:5000/api/alert";
-      } else {
-        return;
-      }
-
-      const res = await fetch(url, {
-        headers: { "Authorization": "Bearer " + token }
-      });
-
-      if (res.status === 401) {
-        localStorage.clear();
-        alert("Session expirée. Veuillez vous reconnecter.");
-        window.location.href = "login.html";
-        return;
-      }
-
-      if (res.ok) {
-        const data = await res.json();
-        
-        if (data.length > 0) {
-          // Rafraîchit la pagination sur la page courante pour maintenir la cohérence
-          if (window.globalPagination) {
-            window.globalPagination.refreshPagination();
-          }
-          
-          this.lastUpdateTime = new Date().toISOString();
-        }
-      }
+      this.lastUpdateTime = new Date().toISOString();
+      
     } catch (err) {
       console.error("Erreur lors de la récupération des données temps réel :", err);
     }

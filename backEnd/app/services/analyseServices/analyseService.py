@@ -1,11 +1,11 @@
 from .logParser import parseSingleLine
 from .detectSQLInjection import detectSQLInjection
+from .detectBrutForce import detectBrutForce, getBrutForceTotalAttemptCount, shouldCreateBrutForceEvent
 from ..eventService import EventService
 from ..alertService import AlertService
 from ...models.fichier_log import FichierLog
 from app import db
 import json
-import time
 import os
 
 def analyzeLogsForAttacks(fichierLogId, startPosition=None):
@@ -15,7 +15,7 @@ def analyzeLogsForAttacks(fichierLogId, startPosition=None):
     """
     fichier = FichierLog.query.get(fichierLogId)
     if not fichier:
-        return [], 0
+        return [], 0, []
 
     # Si aucune position n'est spécifiée, utiliser la position sauvegardée
     if startPosition is None:
@@ -23,24 +23,45 @@ def analyzeLogsForAttacks(fichierLogId, startPosition=None):
 
     analyzedLines = []
     attackDetected = []
-
     
-    with open(fichier.chemin, 'r') as f:
-        f.seek(startPosition)
-        newContent = f.read()
-        newPosition = f.tell()
-        
-        if newContent.strip():
-            # Traiter seulement les nouvelles lignes
-            for line in newContent.strip().split('\n'):
-                parsedLog = parseSingleLine(line)  # Fonction helper
+    # Vérifier que le fichier existe
+    if not os.path.exists(fichier.chemin):
+        print(f"Fichier non trouvé: {fichier.chemin}")
+        return [], startPosition, []
+
+    try:
+        with open(fichier.chemin, 'r', encoding='utf-8') as f:
+            # Aller à la position actuelle
+            f.seek(startPosition)
+            newContent = f.read()
+            newPosition = f.tell()
+            
+            if not newContent.strip():
+                # Pas de nouveau contenu
+                return [], startPosition, []
+            
+            # Normaliser les fins de ligne pour être compatible Windows/Linux
+            # et traiter seulement les nouvelles lignes
+            normalizedContent = newContent.replace('\r\n', '\n').replace('\r', '\n')
+            lines = [line.strip() for line in normalizedContent.strip().split('\n') if line.strip()]
+            
+            print(f"Analyse de {len(lines)} nouvelles lignes depuis position {startPosition}")
+            
+            for line_num, line in enumerate(lines, 1):
+                    
+                parsedLog = parseSingleLine(line)
                 if parsedLog:
-                    event = EventService.createEvent(
-                        ip_source=parsedLog['ip'],
-                        type_evenement=parsedLog['method'],
-                        fichier_log_id=fichierLogId,
-                        url_cible=parsedLog['url'],
-                    )
+                    print(f"Parsing OK: {parsedLog['ip']} {parsedLog['method']} {parsedLog['url']}")
+                    
+                    if shouldCreateBrutForceEvent(parsedLog) | detectSQLInjection(parsedLog['url']):
+                        event = EventService.createEvent(
+                            ip_source=parsedLog['ip'],
+                            type_evenement=parsedLog['method'],
+                            fichier_log_id=fichierLogId,
+                            url_cible=parsedLog['url'],
+                        )
+                        analyzedLines.append(event)
+                    
                     if detectSQLInjection(parsedLog['url']):
                         alert = AlertService.createAlerte(
                             ip_source=event['ip_source'],
@@ -58,57 +79,35 @@ def analyzeLogsForAttacks(fichierLogId, startPosition=None):
                                 "heure": parsedLog['heure']
                             }
                             }), flush=True)
-                        print(f"DEBUG: IP envoyée = '{event['ip_source']}'", flush=True)
-                    time.sleep(1)
-
-    fichier.current_position = newPosition
-    db.session.commit()
-
-    return analyzedLines, newPosition, attackDetected
-
-
-def analyzeLogsForAttacksSafe(fichierLogId, startPosition=0, forceFullAnalysis=False):
-    """
-    Analyse sécurisée avec reset automatique
-    """
-    fichier = FichierLog.query.get(fichierLogId)
-    if not fichier:
-        return [], 0
-
-    # Force l'analyse complète si demandé
-    if forceFullAnalysis:
-        startPosition = 0
+                    if detectBrutForce(parsedLog):
+                        attemptCount = getBrutForceTotalAttemptCount(parsedLog['ip'])
+                        alert = AlertService.createAlerte(
+                            ip_source=event['ip_source'],
+                            type_evenement=f'Brute Force ({attemptCount} tentatives)',
+                            fichier_log_id=fichierLogId,
+                            status_code=parsedLog['status_code'],
+                            evenement_id=event['evenement_id'],
+                        )
+                        attackDetected.append(alert)
+                        print(json.dumps({
+                            "type": "brutForce",
+                            "data": {
+                                "ip": event['ip_source'],
+                                "date": parsedLog['date'],
+                                "heure": parsedLog['heure'],
+                                "attempts": attemptCount
+                            }
+                            }), flush=True)
+                else:
+                    print(f"Parsing ÉCHEC pour la ligne: {line}")  # Debug
     
-    # Validation basique de la position
-    elif startPosition > 0:
-        try:
-            file_size = os.path.getsize(fichier.chemin)
-            if startPosition > file_size:
-                print(f"Position invalide. Reset automatique.")
-                startPosition = 0
-        except:
-            startPosition = 0
-    
-    # Analyse normale
-    return analyzeLogsForAttacks(fichierLogId, startPosition)
-
-
-def continuousAnalysis(fichierLogId):
-    """Analyse continue avec gestion des erreurs"""
-    position = 0
-    
-    while True:
-        try:
-            attacks, newPosition, alerts = analyzeLogsForAttacksSafe(
-                fichierLogId, 
-                position
-            )
-            position = newPosition
-            
-            if attacks:
-                print(f"{len(attacks)} nouveaux événements")
-                
-        except Exception as e:
-            position = 0  # Reset en cas d'erreur
-            
-        time.sleep(5)  # Attendre 5 secondes
+        # Mettre à jour la position seulement après succès
+        fichier.current_position = newPosition
+        db.session.commit()
+        
+        print(f"Position mise à jour: {startPosition} → {newPosition}")
+        return analyzedLines, newPosition, attackDetected
+        
+    except Exception as e:
+        print(f"Erreur lors de l'analyse: {e}")
+        return [], startPosition, []

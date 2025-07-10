@@ -84,8 +84,9 @@ class EventAnalyze(Resource):
         if not fichier_log_id:
             return {"msg": "fichier_log_id manquant"}, 400
 
-        events = analyzeLogsForAttacks(fichier_log_id)
+        events, new_position, alerts = analyzeLogsForAttacks(fichier_log_id)
         return {
             "events_detected": len(events),
-            "events_created": events
+            "events_created": events,
+            "new_position": new_position
             }, 200

@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class Alerte(db.Model):
-    tablename = 'alertes'
+    __tablename__ = 'alertes'
 
     alerte_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     ip_source = db.Column(db.String(45), nullable=False)  # 45 chars pour IPv6

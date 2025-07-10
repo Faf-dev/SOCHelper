@@ -27,12 +27,8 @@ def parseSingleLine(line):
     parts = line.split()
     if len(parts) < 9:
         return None
-        
+
     ip = parts[0]
-    # Vérifie si c'est une IPv4 ou IPv6
-    if not re.match(r"^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$", ip):
-            ip = "??.??.??.??"  # IP invalide, on remplace par une valeur par défaut
-        
     date = parts[3][1:12]  # Suppression de '['
     heure = parts[3][13:21]  # Suppression de ']'
     

@@ -9,14 +9,8 @@
 ## 🚨 Problèmes connus
 
 - Certain url raccourci n'affiche pas l'url complet au survol
-- Les nouvelles entrée ne sont pas prise en compte par l'analyse ✅ Patch
-- Erreur 500 si tentative de suppression d'un evenement liée à une alerte (fonctionnel dans l'autre sens)
-- Position qui change aléatoire lors de l'arret/reprise de l'analyse en temp réel. ✅ Patch
-- Doublon d'analyse ✅ Patch (normalement)
-- deconnexion meme si actif ✅ Patch
 - changer de page désactive l'analyse
 - Formulaire html Email/MDP bloqué ~1min après deconnexion
-- Un token est toujours stocké dans localStorage (normalement SessionStorage) ✅ Patch
 
 ---
 
@@ -24,6 +18,9 @@
 
 - Ajout automatique du fichier sélectionné + le type de serveur dans l'en tête de l'application
 - Limite de 5 tentative de connexion par minute et par IP
+- Détection de brute force
+- Détection de pattern d'injection SQL
+- Notification système
 - Securité du mot de passe (8 caractères minimum, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial)
 - Securité de l'email (vérification de la syntaxe, pas d'espace, pas de caractère spécial)
 - Logo
@@ -38,12 +35,12 @@
 - Script JS pour login et register
 - Route API pour login et register
 - Message d'erreur, de réussite pour la connexion et l'inscription
-- HTML/CSS pour le dashboard (hors éléments dynamique)
-- les models de classes sont fait (version simplifié)
+- HTML/CSS pour le dashboard
+- les models de classes sont fait
 - Token JWT
 - Déconnexion automatique si innactivité prolongé
-- fonction du bouton "Déconnexion" du dashboard (pas de réel déconnexion en revanche)
-- Menu de navigation du dashboard (sans les éléments dynamique)
+- fonction du bouton "Déconnexion" du dashboard
+- Menu de navigation du dashboard
 - Email de l'utilisateur affiché dans l'en-tête
 - import du fichier log (drag & drop ou chemin manuel)
 - Choix du serveur (Nginx/Apache)
@@ -66,14 +63,31 @@
 **Les nouvelles entrée ne sont pas prise en compte par l'analyse**
 
 ### Autres tâches
-- Implémentation des éléments dynamique en HTML/CSS :
-    - Alertes :
-        - Dernière alerte détecté dans /dashboard
 - Détecter les brute force
-- Ajouter un pop up lors d'attaque réussi ou dangereuses
 
 ---
 
+
+## 📅 Fait la semaine du 07/07
+- Démonstration en direct commenté pour le demo day
+
+- Implémentation: dernière alerte généré dans le dashboard (bande rouge)
+- Détection de brute force : 5 tentatives / 10 seconde par ip (ip sauvegardé en mémoire)
+- Limitation a 1 evenement et 1 alerte toutes les 5 minutes pour les brutes forces pour éviter de surcharger le dashboard
+- Compteur de tentative par IP pour brute force
+- Notification systeme pour brute force
+- Script .bat pour générer de fausses lignes de log dans le fichier access.log de test (simulation de temps réel)
+- compilation en .exe de la version finale
+
+- Fix: Bug d'analyse qui re-analysé plusieurs fois le même log (doublon d'evenements et d'alertes)
+- Fix: Adresse ip imcomplète par moment
+- Fix: /models `__tablename__`
+- Fix: Le run.exe se lance désormait avec le front (pas séparement dans un terminal)
+
+#### Difficulté rencontré :
+Implémentation de la détection de brute force :
+- Beaucoup de conditions/situations pour déclencher une alerte (5 tentatives/10sec, Beaucoup de tentative puis réussite, ...)
+- Mémoriser une IP dans le cas ou : Les logs sont séparés par un log "parasite" (un POST /register d'une autre ip parmis les tentative de connexion a /admin via une ip malveillante)
 
 ## 📅 Fait la semaine du 30/06
 - Pitch demo day

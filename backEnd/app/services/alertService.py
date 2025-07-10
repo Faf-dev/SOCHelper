@@ -1,6 +1,5 @@
 from app.models.alerte import Alerte
 from app.models.user import Utilisateur
-from app.models.evenement import Evenement
 from app import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
@@ -86,3 +85,4 @@ class AlertService:
             "limit": per_page,
             "total_alerts": pagination.total
     }
+

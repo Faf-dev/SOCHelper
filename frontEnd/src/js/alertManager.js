@@ -46,7 +46,7 @@ function startAlertMonitoring() {
     // Vérifier immédiatement au chargement
     getLastAlert();
     
-    // Puis vérifier toutes les 10 secondes
+    // Puis vérifier toutes les 5 secondes
     setInterval(getLastAlert, 5000);
 }
 

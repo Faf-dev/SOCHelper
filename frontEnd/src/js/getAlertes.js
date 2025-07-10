@@ -34,6 +34,10 @@ function updateAlertsTable(alerts) {
       <td><button class="btn_delete" data-type="alert" data-id="${alert.alerte_id}"><i class="bi bi-trash3"></i></button></td>
     `;
     tbody.insertBefore(tr, tbody.firstChild);
+    const alertBanner = document.getElementById('alert-banner');
+    const message = `<span class="icon"><i class="bi bi-exclamation-square"></i></span><strong>ALERTE:</strong> Tentative ${alert.type_evenement} détectée depuis <strong>${alert.ip_source}</strong> – Le ${date} à ${heure}`;
+    alertBanner.innerHTML = message;
+    alertBanner.style.display = 'flex';
   });
 
   if (alerts.length > 0 && window.globalPagination) {

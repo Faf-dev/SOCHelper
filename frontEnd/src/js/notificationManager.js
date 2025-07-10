@@ -24,6 +24,7 @@ class NotificationManager {
       });
       
       notification.show();
+      alertBanner.style.display = 'flex';
       console.log("Notification affichée avec succès");
       
       // Événements optionnels pour debug
@@ -41,12 +42,12 @@ class NotificationManager {
   }
 
   // Notification pour brute force
-  showBruteForceAlert(ip, nombreTentatives, date, heure) {
+  showBruteForceAlert(ip, attempts, date, heure) {
     if (!this.isEnabled) return;
     
     const notification = new Notification({
       title: "ALERTE: Tentative brute force détecté",
-      body: `${ip}: ${nombreTentatives} tentatives - Le ${date} à ${heure}`
+      body: `${ip}: ${attempts} tentatives en moins de 10 secondes - Le ${date} à ${heure}`
     });
     
     notification.show();

@@ -43,6 +43,9 @@ function startBackend() {
             const { ip, date, heure } = message.data;
             console.log("Déclenchement notification SQL injection pour:", ip);
             notificationManager.showSQLInjectionAlert(ip, date, heure);
+          } else if (message.type === "brutForce") {
+            const { ip, attempts, date, heure } = message.data;
+            notificationManager.showBruteForceAlert(ip, attempts, date, heure);
           }
         } catch (error) {
           console.error("Erreur de parsing JSON:", error);
@@ -64,6 +67,12 @@ function startBackend() {
   
   backendProcess.on("close", (code) => {
     console.log("Backend fermé avec le code:", code);
+    backendProcess = null; // Nettoyer la référence
+  });
+
+  backendProcess.on("exit", (code, signal) => {
+    console.log(`Backend terminé avec le code ${code} et le signal ${signal}`);
+    backendProcess = null; // Nettoyer la référence
   });
 }
 
@@ -111,6 +120,15 @@ ipcMain.handle("security:sqlInjection", async (event, data) => {
   return { success: true };
 });
 
+// Gestionnaire IPC pour les notifications brute force
+ipcMain.handle("security:brutForce", async (event, data) => {
+  const { ip, attempts, date, heure } = data;
+  console.log("Message reçu via IPC:", data);
+  notificationManager.showBruteForceAlert(ip, attempts, date, heure);
+  console.log("Notification brute force envoyée pour l'IP:", ip);
+  return { success: true };
+});
+
 // Quitter quand toutes les fenêtres sont fermées (uniquement sur macOS)
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
@@ -119,7 +137,47 @@ app.on("activate", () => {
 });
 
 app.on("window-all-closed", () => {
+  // Fermer le backend avant de quitter l'application
+  if (backendProcess && !backendProcess.killed) {
+    console.log("Fermeture du backend...");
+    backendProcess.kill('SIGTERM'); // Essaie un arrêt propre
+    
+    // Si le processus ne se ferme pas dans 3 secondes, le forcer
+    setTimeout(() => {
+      if (backendProcess && !backendProcess.killed) {
+        console.log("Forçage de la fermeture du backend...");
+        backendProcess.kill('SIGKILL');
+      }
+    }, 3000);
+  }
+  
   if (process.platform !== "darwin") {
     app.quit();
+  }
+});
+
+// Gestionnaire pour fermeture propre du backend avant quit
+app.on("before-quit", (event) => {
+  if (backendProcess && !backendProcess.killed) {
+    console.log("Arrêt du backend avant fermeture de l'application...");
+    event.preventDefault(); // Empêche la fermeture immédiate
+    
+    backendProcess.kill('SIGTERM');
+    
+    // Attendre que le processus se ferme ou le forcer après 3 secondes
+    const forceQuitTimeout = setTimeout(() => {
+      if (backendProcess && !backendProcess.killed) {
+        console.log("Forçage de la fermeture du backend...");
+        backendProcess.kill('SIGKILL');
+      }
+      app.quit(); // Fermer l'app après avoir forcé l'arrêt
+    }, 3000);
+    
+    // Si le processus se ferme proprement, annuler le timeout et quitter
+    backendProcess.on('close', () => {
+      clearTimeout(forceQuitTimeout);
+      console.log("Backend fermé proprement");
+      app.quit();
+    });
   }
 });
